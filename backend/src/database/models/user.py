@@ -1,6 +1,7 @@
 from typing import TYPE_CHECKING, Optional
+from datetime import datetime
 
-from sqlalchemy import String, Enum
+from sqlalchemy import String, Enum, DateTime
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 
@@ -29,6 +30,11 @@ class User(Base):
     phone: Mapped[str] = mapped_column(String(20), nullable=True, unique=True)
     role: Mapped[UserRole] = mapped_column(Enum(UserRole), default=UserRole.RESIDENT)
 
+    # Tokens
+    refresh_token: Mapped[str] = mapped_column(String(512), nullable=True)
+    refresh_token_expires_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=True
+    )
     # Relationships
     requests: Mapped[list["Request"]] = relationship(
         "Request", back_populates="user", cascade="all, delete-orphan"
