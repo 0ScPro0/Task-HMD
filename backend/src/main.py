@@ -12,7 +12,7 @@ async def lifespan(app: FastAPI):
     yield
 
 
-app = FastAPI(title="ScProGPT", lifespan=lifespan)
+app = FastAPI(title="HMD", lifespan=lifespan)
 app.include_router(router)
 
 app.add_middleware(
