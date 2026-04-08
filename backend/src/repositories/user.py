@@ -96,6 +96,46 @@ class UserRepository(BaseRepository[User, UserCreate, UserUpdate]):
         )
         return updated_user
 
+    async def activate(self, session: AsyncSession, *, user_id: int) -> Optional[User]:
+        """
+        Activate user
+
+        Args:
+            session: Database session
+            user_id: int
+
+        Returns:
+            Activated user object or None if not found
+        """
+        updated_user = await self.update_field(
+            session=session, object_id=user_id, field_name="is_active", field_value=True
+        )
+        return updated_user
+
+    async def deactivate(
+        self,
+        session: AsyncSession,
+        *,
+        user_id: int,
+    ) -> Optional[User]:
+        """
+        Deactivate user
+
+        Args:
+            session: Database session
+            user_id: int
+
+        Returns:
+            Deactivated user object or None if not found
+        """
+        updated_user = await self.update_field(
+            session=session,
+            object_id=user_id,
+            field_name="is_active",
+            field_value=False,
+        )
+        return updated_user
+
     async def delete_user(
         self, session: AsyncSession, *, user_id: int
     ) -> Optional[User]:
