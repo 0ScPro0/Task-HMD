@@ -20,6 +20,7 @@ class Request(Base):
         Integer, ForeignKey("users.id"), nullable=False, index=True
     )
     type: Mapped[RequestType] = mapped_column(Enum(RequestType), nullable=False)
+    title: Mapped[str] = mapped_column(String(100), nullable=False)
     description: Mapped[str] = mapped_column(String, nullable=False)
     status: Mapped[RequestStatus] = mapped_column(
         Enum(RequestStatus), default=RequestStatus.NEW
