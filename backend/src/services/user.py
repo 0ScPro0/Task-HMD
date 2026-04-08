@@ -1,15 +1,14 @@
-from datetime import timedelta, datetime, timezone
-from typing import List, overload
+from typing import List
 from sqlalchemy.ext.asyncio import AsyncSession
 
 
 from core.config import settings
 from database import User
-from repositories import UserRepository, user_repository
+from repositories import UserRepository
 from schemas.user import UserCreate, UserResponse
 from schemas.user import UserCreate, UserUpdate
 from services.base import BaseService
-from utils.logger import logger, log
+from utils.logger import log
 
 
 class UserService(BaseService[User, UserCreate, UserUpdate, UserRepository]):
