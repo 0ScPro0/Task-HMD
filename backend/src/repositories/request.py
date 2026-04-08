@@ -48,3 +48,6 @@ class RequestRepository(BaseRepository[Request, RequestCreate, RequestUpdate]):
         """
         request = await self.create(session=session, object_in=request_object)
         return request
+
+
+request_repository = RequestRepository(Request)

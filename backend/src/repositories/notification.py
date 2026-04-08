@@ -50,3 +50,6 @@ class NotificationRepository(
         """
         notification = await self.create(session=session, object_in=notification_object)
         return notification
+
+
+notification_repository = NotificationRepository(Notification)

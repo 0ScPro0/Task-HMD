@@ -43,3 +43,6 @@ class NewsRepository(BaseRepository[News, NewsCreate, NewsUpdate]):
         """
         news = await self.create(session=session, object_in=news_object)
         return news
+
+
+news_repository = NewsRepository(News)
