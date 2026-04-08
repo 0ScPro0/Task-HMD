@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Optional
 
 from sqlalchemy import Boolean, ForeignKey, Integer, String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
@@ -22,19 +22,21 @@ class Notification(Base):
     is_read: Mapped[bool] = mapped_column(Boolean, default=False)
 
     # Chinned entity (optional)
-    request_id: Mapped[int | None] = mapped_column(
+    request_id: Mapped[Optional[int]] = mapped_column(
         Integer, ForeignKey("requests.id"), nullable=True
     )
-    news_id: Mapped[int | None] = mapped_column(
+    news_id: Mapped[Optional[int]] = mapped_column(
         Integer, ForeignKey("news.id"), nullable=True
     )
 
     # Relationships
     user: Mapped["User"] = relationship("User", back_populates="notifications")
-    request: Mapped["Request | None"] = relationship(
+    request: Mapped["Optional[Request]"] = relationship(
         "Request", back_populates="notifications"
     )
-    news: Mapped["News | None"] = relationship("News", back_populates="notifications")
+    news: Mapped["Optional[News]"] = relationship(
+        "News", back_populates="notifications"
+    )
 
     def __repr__(self) -> str:
         return f"<Notification(id={self.id}, user_id={self.user_id}, is_read={self.is_read})>"
