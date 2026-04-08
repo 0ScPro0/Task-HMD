@@ -1,7 +1,6 @@
 from typing import List
 from sqlalchemy.ext.asyncio import AsyncSession
 
-
 from core.config import settings
 from database import User
 from repositories import UserRepository
