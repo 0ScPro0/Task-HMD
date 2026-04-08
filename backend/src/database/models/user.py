@@ -25,8 +25,8 @@ class User(Base):
     patronymic: Mapped[Optional[str]] = mapped_column(
         String(100), nullable=True, default=None
     )
-    address: Mapped[str] = mapped_column(String(100), nullable=False)
-    apartment: Mapped[str] = mapped_column(String(20), nullable=True)
+    address: Mapped[Optional[str]] = mapped_column(String(100), nullable=True)
+    apartment: Mapped[Optional[str]] = mapped_column(String(20), nullable=True)
     phone: Mapped[str] = mapped_column(String(20), nullable=True, unique=True)
     role: Mapped[UserRole] = mapped_column(Enum(UserRole), default=UserRole.RESIDENT)
 

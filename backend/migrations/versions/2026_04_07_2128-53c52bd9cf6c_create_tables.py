@@ -38,14 +38,12 @@ def upgrade() -> None:
         sa.Column("name", sa.String(length=100), nullable=False),
         sa.Column("surname", sa.String(length=100), nullable=False),
         sa.Column("patronymic", sa.String(length=100), nullable=True),
-        sa.Column("address", sa.String(length=100), nullable=False),
+        sa.Column("address", sa.String(length=100), nullable=True),
         sa.Column("apartment", sa.String(length=20), nullable=True),
         sa.Column("phone", sa.String(length=20), nullable=True),
         sa.Column(
             "role",
-            sa.Enum(
-                "RESIDENT", "ADMIN", "PLUMBER", "ELECTRICIAN", name="userrole"
-            ),
+            sa.Enum("RESIDENT", "ADMIN", "PLUMBER", "ELECTRICIAN", name="userrole"),
             nullable=False,
         ),
         sa.Column("id", sa.Integer(), autoincrement=True, nullable=False),
@@ -85,9 +83,7 @@ def upgrade() -> None:
         ),
         sa.PrimaryKeyConstraint("id"),
     )
-    op.create_index(
-        op.f("ix_requests_user_id"), "requests", ["user_id"], unique=False
-    )
+    op.create_index(op.f("ix_requests_user_id"), "requests", ["user_id"], unique=False)
     op.create_table(
         "notifications",
         sa.Column("user_id", sa.Integer(), nullable=False),
