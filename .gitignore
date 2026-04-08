@@ -70,6 +70,7 @@ backend/*.swo
 
 # Other
 backend/tests/prototypes
+backend/test_credentials.json
 count_lines.py
 
 # ==================== FRONTEND (React) ====================
