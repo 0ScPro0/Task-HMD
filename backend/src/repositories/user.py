@@ -1,5 +1,5 @@
 from typing import Dict, List, Optional, Any, Union
-from pydantic import BaseModel
+from pydantic import BaseModel, EmailStr
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 from datetime import datetime
@@ -26,6 +26,28 @@ class UserRepository(BaseRepository[User, UserCreate, UserUpdate]):
             User or None if not found
         """
         user = await self.get(session, id=user_id)
+        return user
+
+    async def get_user_by_phone_or_email(
+        self,
+        session: AsyncSession,
+        *,
+        phone: Optional[str] = None,
+        email: Optional[EmailStr] = None,
+    ) -> Optional[User]:
+        """
+        Get user by phone or email
+
+        Args:
+            session: Database session
+            phone: str
+            email: EmailStr
+
+        Returns:
+            User object or None if not found
+        """
+        fields = {"phone": phone, "email": email}
+        user = await self.get_by_fields(session=session, fields=fields)
         return user
 
     async def create_user(
@@ -93,6 +115,26 @@ class UserRepository(BaseRepository[User, UserCreate, UserUpdate]):
                 "refresh_token": refresh_token,
                 "refresh_token_expires_at": expires_at,
             },
+        )
+        return updated_user
+
+    async def clear_refresh_token(
+        self, session: AsyncSession, *, user_id: int
+    ) -> Optional[User]:
+        """
+        Clear user refresh token (set to None)
+
+        Args:
+            session: Database session
+            user_id: int
+
+        Returns:
+            Updated user object or None if not found
+        """
+        updated_user = await self.update_fields(
+            session=session,
+            object_id=user_id,
+            fields={"refresh_token": None, "refresh_token_expires_at": None},
         )
         return updated_user
 
