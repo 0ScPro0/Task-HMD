@@ -1,9 +1,8 @@
 from typing import TYPE_CHECKING, Optional
 from datetime import datetime
 
-from sqlalchemy import String, Enum, DateTime
+from sqlalchemy import String, Enum, DateTime, Boolean
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-
 
 from database.types.user import UserRole
 from database.models.base import Base
@@ -20,6 +19,7 @@ class User(Base):
         String(100), unique=True, nullable=True, index=True
     )
     password_hash: Mapped[str] = mapped_column(String(255), nullable=False)
+    is_active: Mapped[bool] = mapped_column(Boolean, default=True)
     name: Mapped[str] = mapped_column(String(100), nullable=False)
     surname: Mapped[str] = mapped_column(String(100), nullable=False)
     patronymic: Mapped[Optional[str]] = mapped_column(
