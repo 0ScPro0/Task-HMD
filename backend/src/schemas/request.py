@@ -1,5 +1,5 @@
 from typing import Optional
-from pydantic import BaseModel, EmailStr, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field
 from datetime import datetime
 
 from database import RequestStatus, RequestType
@@ -13,11 +13,11 @@ class RequestBase(BaseModel):
 
 
 class RequestCreate(RequestBase):
-    pass
+    user_id: int
 
 
 class RequestUpdate(RequestBase):
-    pass
+    user_id: int
 
 
 class RequestResponse(RequestBase):
