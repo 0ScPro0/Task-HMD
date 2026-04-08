@@ -4,8 +4,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from core.config import settings
 from database import User
 from repositories import UserRepository
-from schemas.user import UserCreate, UserResponse
-from schemas.user import UserCreate, UserUpdate
+from schemas.user import UserCreate, UserResponse, UserUpdate
 from services.base import BaseService
 from utils.logger import log
 
