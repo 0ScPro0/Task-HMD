@@ -1,7 +1,7 @@
 from typing import Any, Dict, Generic, List, Optional, Set, Type, TypeVar, Union
 from pydantic import BaseModel
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select
+from sqlalchemy import select, or_
 from sqlalchemy.sql.expression import func
 
 from utils.logger import logger, log_database_queries
@@ -66,7 +66,7 @@ class BaseRepository(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
 
     @log_database_queries
     async def get_by_field(
-        self, session: AsyncSession, field_name: str, field_value: Any
+        self, session: AsyncSession, *, field_name: str, field_value: Any
     ) -> Optional[ModelType]:
         """
         Get object by field value (email, username etc.)
@@ -124,6 +124,34 @@ class BaseRepository(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
             .limit(limit)
         )
         return list(result.scalars().all())
+
+    async def get_by_fields(
+        self, session: AsyncSession, *, fields: Dict[str, Any]
+    ) -> Optional[ModelType]:
+        """
+        Get object by some fields.
+        An object return if at least one match is found.
+
+        Args:
+            session: Database session
+            fields: dict of fields {name: value}
+
+        Returns:
+            Object or None if not found
+        """
+        filter_conditions = []
+
+        for field_name, field_value in fields.items():
+            if field_value:
+                filter_conditions.append(getattr(self.model, field_name) == field_value)
+
+        if not filter_conditions:
+            return None
+
+        query = select(self.model).where(or_(*filter_conditions))
+        result = await session.execute(query)
+
+        return result.scalar_one_or_none()
 
     @log_database_queries
     async def create(
