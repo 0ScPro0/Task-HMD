@@ -112,5 +112,19 @@ class UserRepository(BaseRepository[User, UserCreate, UserUpdate]):
         deleted_user = await self.delete(session=session, id=user_id)
         return deleted_user
 
+    async def is_active(self, session: AsyncSession, *, user_id: int) -> bool:
+        """
+        Check if user is active
+
+        Args:
+            session: Database session
+            user_id: int
+
+        Returns:
+            bool: True if user is active, False otherwise
+        """
+        user: User = await self.get(session=session, id=user_id)
+        return user.is_active if user else False
+
 
 user_repository = UserRepository(User)
