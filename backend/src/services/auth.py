@@ -41,7 +41,7 @@ class AuthService:
         Register a new user
 
         Args:
-            user (RegisterRequense): User data
+            user (RegisterRequest): User data
 
         Raises:
             AuthError: If user with the same email already exists
