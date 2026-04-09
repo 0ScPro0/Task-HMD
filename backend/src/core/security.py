@@ -205,7 +205,6 @@ async def get_current_user(
 
 async def get_current_admin(
     current_user: User = Depends(get_current_user),
-    session: AsyncSession = Depends(database.get_session),
 ) -> User:
     """
     Dependency that verifies current user is an admin.
