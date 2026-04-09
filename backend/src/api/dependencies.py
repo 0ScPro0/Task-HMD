@@ -3,9 +3,20 @@ from fastapi import Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from database import database, User, Request, Notification, News
-from repositories import user_repository
+from repositories import (
+    user_repository,
+    request_repository,
+    notification_repository,
+    news_repository,
+)
 from schemas.user import UserResponse
-from services import AuthService, UserService
+from services import (
+    AuthService,
+    UserService,
+    RequestService,
+    NotificationService,
+    NewsService,
+)
 
 
 async def get_db_session() -> AsyncGenerator[AsyncSession, None]:
@@ -32,11 +43,38 @@ async def get_user_service(
     return UserService(session, user_repository)
 
 
+async def get_request_service(
+    session: AsyncSession = Depends(get_db_session),
+) -> RequestService:
+    """Get request service"""
+    return RequestService(session, request_repository)
+
+
+async def get_notification_service(
+    session: AsyncSession = Depends(get_db_session),
+) -> NotificationService:
+    """Get notification_ service"""
+    return NotificationService(session, notification_repository)
+
+
+async def get_news_service(
+    session: AsyncSession = Depends(get_db_session),
+) -> NewsService:
+    """Get news service"""
+    return NewsService(session, news_repository)
+
+
 __all__ = [
     "AuthService",
     "UserService",
+    "RequestService",
+    "NotificationService",
+    "NewsService",
     "UserResponse",
     "get_db_session",
     "get_auth_service",
     "get_user_service",
+    "get_request_service",
+    "get_notification_service",
+    "get_news_service",
 ]
