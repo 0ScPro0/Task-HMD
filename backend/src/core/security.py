@@ -14,7 +14,7 @@ from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from core.config import settings
-from core.exceptions import AuthError, InvalidTokenTypeError
+from core.exceptions import AuthError, InvalidTokenTypeError, PermissionDeniedError
 
 from database import database, User
 from repositories import user_repository
@@ -201,3 +201,20 @@ async def get_current_user(
         raise AuthError("User is not active")
 
     return user
+
+
+async def get_current_admin(
+    current_user: User = Depends(get_current_user),
+    session: AsyncSession = Depends(database.get_session),
+) -> User:
+    """
+    Dependency that verifies current user is an admin.
+    Uses get_current_user from core.security and checks role.
+    """
+    if current_user.role != "admin":
+        raise PermissionDeniedError("Admin privileges required")
+
+    if not current_user.is_active:
+        raise AuthError(detail="Account inactive")
+
+    return current_user
