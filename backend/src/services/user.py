@@ -1,7 +1,8 @@
-from typing import List
+from typing import List, Optional, Any
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from core.config import settings
+from core.exceptions import NotFoundError
 from database import User
 from repositories import UserRepository
 from schemas.user import UserCreate, UserResponse, UserUpdate
@@ -19,23 +20,55 @@ class UserService(BaseService[User, UserCreate, UserUpdate, UserRepository]):
         )
 
     @log
-    async def get_all_users(self) -> List[UserResponse]:
+    async def get_users(
+        self, skip: int, limit: int, order_by: Optional[Any]
+    ) -> List[UserResponse]:
         users = await self.repository.get_many(
             self.session, skip=0, limit=100, order_by=None
         )
+        if not users:
+            raise NotFoundError("Not found any users")
+
         return [UserResponse.model_validate(user) for user in users]
 
     @log
     async def get_user(self, user_id: int) -> UserResponse:
         user = await self.repository.get(self.session, user_id)
+        if not user:
+            raise NotFoundError("User not found")
+
         return UserResponse.model_validate(user)
 
     @log
     async def update_user(self, user_id: int, user: UserUpdate) -> UserResponse:
-        user = await self.repository.update(self.session, user_id, user)
+        user = await self.repository.update(
+            self.session, update_object_id=user_id, object_in=user
+        )
+        if not user:
+            raise NotFoundError("User not found")
+
         return UserResponse.model_validate(user)
 
     @log
     async def delete_user(self, user_id: int) -> UserResponse:
+        user = await self.repository.delete(self.session, id=user_id)
+        if not user:
+            raise NotFoundError("User not found")
+
+        return UserResponse.model_validate(user)
+
+    @log
+    async def activate_user(self, user_id: int) -> UserResponse:
+        user = await self.repository.activate(self.session, user_id=user_id)
+        if not user:
+            raise NotFoundError("User not found")
+
+        return UserResponse.model_validate(user)
+
+    @log
+    async def deactivate_user(self, user_id: int) -> UserResponse:
         user = await self.repository.delete(self.session, user_id)
+        if not user:
+            raise NotFoundError("User not found")
+
         return UserResponse.model_validate(user)
