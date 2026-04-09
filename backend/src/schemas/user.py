@@ -10,8 +10,8 @@ class UserBase(BaseModel):
     name: str = Field(..., min_length=3, max_length=100)
     surname: str = Field(..., min_length=3, max_length=100)
     patronymic: Optional[str] = Field(None, min_length=3, max_length=100)
-    address: str = Field(..., min_length=3, max_length=100)
-    apartment: str = Field(..., min_length=1, max_length=20)
+    address: Optional[str] = Field(None, min_length=3, max_length=100)
+    apartment: Optional[str] = Field(None, min_length=1, max_length=20)
     phone: str = Field(..., min_length=9, max_length=15)
     role: UserRole = Field(UserRole.RESIDENT)
 
