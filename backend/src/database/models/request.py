@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Optional
 import enum
 
 from sqlalchemy import Integer, String, ForeignKey, Enum
@@ -16,9 +16,10 @@ if TYPE_CHECKING:
 class Request(Base):
     __tablename__ = "requests"
 
-    user_id: Mapped[int] = mapped_column(
+    owner_id: Mapped[int] = mapped_column(
         Integer, ForeignKey("users.id"), nullable=False, index=True
     )
+    executor_id: Mapped[int] = mapped_column(Integer, ForeignKey("users.id"))
     type: Mapped[RequestType] = mapped_column(Enum(RequestType), nullable=False)
     title: Mapped[str] = mapped_column(String(100), nullable=False)
     description: Mapped[str] = mapped_column(String, nullable=False)
@@ -28,10 +29,15 @@ class Request(Base):
     admin_comment: Mapped[str | None] = mapped_column(String, nullable=True)
 
     # Relationships
-    user: Mapped["User"] = relationship("User", back_populates="requests")
+    owner: Mapped["User"] = relationship(
+        "User", foreign_keys=[owner_id], back_populates="owned_requests"
+    )
+    executor: Mapped[Optional["User"]] = relationship(
+        "User", foreign_keys=[executor_id], back_populates="executed_requests"
+    )
     notifications: Mapped[list["Notification"]] = relationship(
         "Notification", back_populates="request", cascade="all, delete-orphan"
     )
 
     def __repr__(self) -> str:
-        return f"<Request(id={self.id}, user_id={self.user_id}, type={self.type}, status={self.status})>"
+        return f"<Request(id={self.id}, owner_id={self.owner_id}, type={self.type}, status={self.status})>"

@@ -1,8 +1,8 @@
-"""fix models
+"""update request and user models
 
-Revision ID: 1664582e6d18
+Revision ID: 0cef71ab930a
 Revises:
-Create Date: 2026-04-10 19:10:34.532192
+Create Date: 2026-04-10 21:01:43.896598
 
 """
 
@@ -12,7 +12,7 @@ from alembic import op
 import sqlalchemy as sa
 
 # revision identifiers, used by Alembic.
-revision: str = "1664582e6d18"
+revision: str = "0cef71ab930a"
 down_revision: Union[str, Sequence[str], None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -64,10 +64,11 @@ def upgrade() -> None:
     op.create_index(op.f("ix_users_email"), "users", ["email"], unique=True)
     op.create_table(
         "requests",
-        sa.Column("user_id", sa.Integer(), nullable=False),
+        sa.Column("owner_id", sa.Integer(), nullable=False),
+        sa.Column("executor_id", sa.Integer(), nullable=False),
         sa.Column(
             "type",
-            sa.Enum("PLUMBING", "ELECTRICIAN", "OTHER", name="requesttype"),
+            sa.Enum("PLUMBER", "ELECTRICIAN", "OTHER", name="requesttype"),
             nullable=False,
         ),
         sa.Column("title", sa.String(length=100), nullable=False),
@@ -88,13 +89,17 @@ def upgrade() -> None:
         sa.Column("created_at", sa.DateTime(), nullable=False),
         sa.Column("updated_at", sa.DateTime(), nullable=False),
         sa.ForeignKeyConstraint(
-            ["user_id"],
+            ["executor_id"],
+            ["users.id"],
+        ),
+        sa.ForeignKeyConstraint(
+            ["owner_id"],
             ["users.id"],
         ),
         sa.PrimaryKeyConstraint("id"),
     )
     op.create_index(
-        op.f("ix_requests_user_id"), "requests", ["user_id"], unique=False
+        op.f("ix_requests_owner_id"), "requests", ["owner_id"], unique=False
     )
     op.create_table(
         "notifications",
@@ -151,7 +156,7 @@ def downgrade() -> None:
     )
     op.drop_table("user_notifications")
     op.drop_table("notifications")
-    op.drop_index(op.f("ix_requests_user_id"), table_name="requests")
+    op.drop_index(op.f("ix_requests_owner_id"), table_name="requests")
     op.drop_table("requests")
     op.drop_index(op.f("ix_users_email"), table_name="users")
     op.drop_table("users")

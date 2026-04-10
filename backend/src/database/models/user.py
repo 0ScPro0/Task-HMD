@@ -36,10 +36,19 @@ class User(Base):
         DateTime(timezone=True), nullable=True
     )
     # Relationships
-    requests: Mapped[List["Request"]] = relationship(
-        "Request", back_populates="user", cascade="all, delete-orphan"
+    owned_requests: Mapped[Optional[List["Request"]]] = relationship(
+        "Request",
+        foreign_keys="Request.owner_id",
+        back_populates="owner",
+        cascade="all, delete-orphan",
     )
-    user_notifications: Mapped[List["UserNotification"]] = relationship(
+    executed_requests: Mapped[Optional[List["Request"]]] = relationship(
+        "Request",
+        foreign_keys="Request.executor_id",
+        back_populates="executor",
+        cascade="all, delete-orphan",
+    )
+    user_notifications: Mapped[Optional[List["UserNotification"]]] = relationship(
         "UserNotification", back_populates="user", cascade="all, delete-orphan"
     )
 
