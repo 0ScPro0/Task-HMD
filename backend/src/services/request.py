@@ -2,7 +2,7 @@ from typing import Any, List, Optional
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from core.exceptions import NotFoundError, CreateError, PermissionDeniedError
-from database import Request, RequestStatus, UserRole
+from database import Request, RequestStatus, User, UserRole
 from repositories import RequestRepository
 from schemas.request import RequestCreate, RequestUpdate, RequestResponse
 from services.base import BaseService
@@ -23,6 +23,7 @@ class RequestService(
     @log
     async def get_requests(
         self,
+        user: User,
         skip: Optional[int] = 0,
         limit: Optional[int] = 100,
         order_by: Optional[Any] = None,
@@ -38,6 +39,8 @@ class RequestService(
         Returns:
             List of requests
         """
+        if user.role != UserRole.ADMIN:
+            PermissionDeniedError("Only admin can get")
         requests = await self.repository.get_many(
             self.session, skip=skip, limit=limit, order_by=order_by
         )
@@ -47,7 +50,9 @@ class RequestService(
 
     @log
     async def get_requests_by_user(
-        self, user_id: int, limit: Optional[int] = 100
+        self,
+        user: User,
+        limit: Optional[int] = 100,
     ) -> List[RequestResponse]:
         """
         Get requests by user
@@ -60,14 +65,18 @@ class RequestService(
             List of RequestResponse
         """
         requests = await self.repository.get_requests_by_user(
-            self.session, user_id=user_id, limit=limit
+            self.session, user_id=user.id, limit=limit
         )
         if not requests:
             raise NotFoundError("User has not any requests")
         return [RequestResponse.model_validate(request) for request in requests]
 
     @log
-    async def get_request(self, request_id: int) -> RequestResponse:
+    async def get_request(
+        self,
+        user: User,
+        request_id: int,
+    ) -> RequestResponse:
         """
         Get request by id
 
@@ -77,9 +86,15 @@ class RequestService(
         Returns:
             RequestResponse
         """
-        request = await self.repository.get(self.session, id=request_id)
+        request: Request = await self.repository.get(self.session, id=request_id)
         if not request:
             raise NotFoundError("Request not found")
+        if (
+            user.role != UserRole.ADMIN
+            or request.owner_id != user.id
+            or request.executor_id != user.id
+        ):
+            raise PermissionDeniedError("Only admin, owner or executor can get request")
         return RequestResponse.model_validate(request)
 
     @log
@@ -121,7 +136,7 @@ class RequestService(
 
     @log
     async def update_request_executor(
-        self, request_id: int, user_role: str, executor_id: int
+        self, request_id: int, user: User, executor_id: int
     ) -> RequestResponse:
         """
         Update request executor
@@ -133,12 +148,12 @@ class RequestService(
         Returns:
             RequestResponse
         """
-        request = await self.get_request(request_id=request_id)
+        request = await self.get_request(request_id=request_id, user=user.id)
         if not request:
             raise NotFoundError("Request not found")
 
         # Check user is admin or request executor with same role
-        if user_role != UserRole.ADMIN or request.type != user_role:
+        if user.role != UserRole.ADMIN or request.type != user.role:
             raise PermissionDeniedError(
                 "Only admin or executer with same role can update request executer"
             )
