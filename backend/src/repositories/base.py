@@ -98,6 +98,7 @@ class BaseRepository(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
         field_value: Any,
         skip: int = 0,
         limit: int = 100,
+        order_by: Any = None,
     ) -> List[ModelType]:
         """
         Get many objects by field value
@@ -117,11 +118,15 @@ class BaseRepository(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
                 f"Model {self.model.__name__} has no field {field_name}"
             )
 
+        if not order_by:
+            order_by = self.model.id
+
         result = await session.execute(
             select(self.model)
             .where(getattr(self.model, field_name) == field_value)
             .offset(skip)
             .limit(limit)
+            .order_by(order_by)
         )
         return list(result.scalars().all())
 
@@ -200,7 +205,9 @@ class BaseRepository(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
         Returns:
             Updated object
         """
-        database_object: ModelType = await self.get(session, update_object_id)
+        database_object: ModelType = await self.get(
+            session, update_object_id
+        )  # type: ignore
 
         if isinstance(object_in, dict):
             update_data = object_in
