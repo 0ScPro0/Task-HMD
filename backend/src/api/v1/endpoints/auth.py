@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends
 
 from api.dependencies import AuthService, get_auth_service
 from core.security import get_current_user
-from core.exceptions import AuthError
+from core.exceptions import PermissionDeniedError
 
 from database import User
 
@@ -25,6 +25,8 @@ async def register(
     """
     Register a new user
     """
+    if request.role != "resident":
+        raise PermissionDeniedError("Can only register as a resident")
     return await auth_service.register(request)
 
 
