@@ -84,3 +84,6 @@ class UserNotificationRepository(
             field_name="is_read",
             field_value=True,
         )
+
+
+user_notification_repository = UserNotificationRepository(UserNotification)
