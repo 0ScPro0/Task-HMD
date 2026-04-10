@@ -14,4 +14,6 @@ class RequestAdmin(ModelView, model=Request):
 
     form_excluded_columns = [
         "notifications",
+        "created_at",
+        "updated_at",
     ]
