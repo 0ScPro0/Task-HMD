@@ -6,7 +6,6 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from database.models.base import Base
 
 if TYPE_CHECKING:
-    from database.models.request import User
     from database.models.request import Request
     from database.models.news import News
     from database.models.user_notification import UserNotification
@@ -27,6 +26,9 @@ class Notification(Base):
     )
 
     # Relationships
+    user_notifications: Mapped[List["UserNotification"]] = relationship(
+        "UserNotification", back_populates="notification", cascade="all, delete-orphan"
+    )
     request: Mapped["Optional[Request]"] = relationship(
         "Request", back_populates="notifications"
     )
