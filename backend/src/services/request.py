@@ -86,7 +86,7 @@ class RequestService(
         Returns:
             RequestResponse
         """
-        request: Request = await self.repository.get(self.session, id=request_id)
+        request = await self.repository.get(self.session, id=request_id)
         if not request:
             raise NotFoundError("Request not found")
         if (
@@ -129,10 +129,12 @@ class RequestService(
         Returns:
             RequestResponse
         """
-        request = await self.repository.update(self.session, request_id, request)
-        if not request:
+        updated_request = await self.repository.update(
+            self.session, update_object_id=request_id, object_in=request
+        )
+        if not updated_request:
             raise NotFoundError("Request not found")
-        return RequestResponse.model_validate(request)
+        return RequestResponse.model_validate(updated_request)
 
     @log
     async def update_request_executor(
@@ -187,7 +189,7 @@ class RequestService(
             RequestResponse
         """
         # Get request
-        request: Request = await self.repository.get(self.session, id=request_id)
+        request = await self.repository.get(self.session, id=request_id)
         if not request:
             raise NotFoundError("Request not found")
 
@@ -217,7 +219,7 @@ class RequestService(
             True if request was deleted else False
         """
         # Get request
-        request: Request = await self.repository.get(self.session, id=request_id)
+        request = await self.repository.get(self.session, id=request_id)
         if not request:
             raise NotFoundError("Request not found")
 
@@ -231,5 +233,5 @@ class RequestService(
                 "Only admin, worker or request owner can delete request"
             )
 
-        deleted_request = await self.repository.delete(self.session, request_id)
+        deleted_request = await self.repository.delete(self.session, id=request_id)
         return True
