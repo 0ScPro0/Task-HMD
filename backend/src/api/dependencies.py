@@ -7,6 +7,7 @@ from repositories import (
     user_repository,
     request_repository,
     notification_repository,
+    user_notification_repository,
     news_repository,
 )
 from schemas.user import UserResponse
@@ -54,7 +55,9 @@ async def get_notification_service(
     session: AsyncSession = Depends(get_db_session),
 ) -> NotificationService:
     """Get notification_ service"""
-    return NotificationService(session, notification_repository)
+    return NotificationService(
+        session, notification_repository, user_notification_repository
+    )
 
 
 async def get_news_service(
