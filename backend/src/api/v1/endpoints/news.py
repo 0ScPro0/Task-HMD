@@ -11,16 +11,7 @@ from utils.logger import log
 router = APIRouter(prefix="/news", tags=["news"])
 
 
-@router.post("/news", response_model=NewsResponse)
-async def create_news(
-    admin: User = Depends(get_current_admin),
-    news_service: NewsService = Depends(get_news_service),
-):
-    """Create news"""
-    pass
-
-
-@router.get("/news", response_model=NewsResponse)
+@router.get("/news", response_model=List[NewsResponse])
 async def get_news(
     skip: int = Query(0, ge=0),
     limit: int = Query(100, ge=1, le=1000),
@@ -28,7 +19,9 @@ async def get_news(
     news_service: NewsService = Depends(get_news_service),
 ):
     """News list"""
-    pass
+    return await news_service.get_news_list(
+        skip=skip, limit=limit, order_by=News.created_at
+    )
 
 
 @router.get("/news/{news_id}", response_model=NewsResponse)
@@ -38,24 +31,4 @@ async def get_news_by_id(
     news_service: NewsService = Depends(get_news_service),
 ):
     """News details"""
-    pass
-
-
-@router.patch("/news/{news_id}", response_model=NewsResponse)
-async def update_news(
-    news_id: int,
-    admin: User = Depends(get_current_admin),
-    news_service: NewsService = Depends(get_news_service),
-):
-    """Update news"""
-    pass
-
-
-@router.delete("/news/{news_id}", response_model=NewsResponse)
-async def delete_news(
-    news_id: int,
-    admin: User = Depends(get_current_admin),
-    news_service: NewsService = Depends(get_news_service),
-):
-    """Delete news"""
-    pass
+    return await news_service.get_news(news_id=news_id)
