@@ -21,10 +21,13 @@ class UserService(BaseService[User, UserCreate, UserUpdate, UserRepository]):
 
     @log
     async def get_users(
-        self, skip: int, limit: int, order_by: Optional[Any]
+        self,
+        skip: Optional[int] = 0,
+        limit: Optional[int] = 100,
+        order_by: Optional[Any] = None,
     ) -> List[UserResponse]:
         users = await self.repository.get_many(
-            self.session, skip=0, limit=100, order_by=None
+            self.session, skip=skip, limit=limit, order_by=order_by
         )
         if not users:
             raise NotFoundError("Not found any users")
