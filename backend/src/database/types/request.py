@@ -4,12 +4,12 @@ import enum
 class RequestType(str, enum.Enum):
     """
     Request type
-    - plumbing
+    - plumber
     - electrician
     - other
     """
 
-    PLUMBING = "plumbing"
+    PLUMBER = "plumber"
     ELECTRICIAN = "electrician"
     OTHER = "other"
 
