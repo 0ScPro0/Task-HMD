@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING, List, Optional
 from datetime import datetime
 
 from sqlalchemy import String, Enum, DateTime, Boolean
@@ -9,7 +9,7 @@ from database.models.base import Base
 
 if TYPE_CHECKING:
     from database.models.request import Request
-    from database.models.notification import Notification
+    from database.models.user_notification import UserNotification
 
 
 class User(Base):
@@ -36,11 +36,11 @@ class User(Base):
         DateTime(timezone=True), nullable=True
     )
     # Relationships
-    requests: Mapped[list["Request"]] = relationship(
+    requests: Mapped[List["Request"]] = relationship(
         "Request", back_populates="user", cascade="all, delete-orphan"
     )
-    notifications: Mapped[list["Notification"]] = relationship(
-        "Notification", back_populates="user", cascade="all, delete-orphan"
+    user_notifications: Mapped[List["UserNotification"]] = relationship(
+        "UserNotification", back_populates="user", cascade="all, delete-orphan"
     )
 
     def __repr__(self) -> str:

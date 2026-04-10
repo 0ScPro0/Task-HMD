@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING, List, Optional
 
 from sqlalchemy import Boolean, ForeignKey, Integer, String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
@@ -9,19 +9,16 @@ if TYPE_CHECKING:
     from database.models.request import User
     from database.models.request import Request
     from database.models.news import News
+    from database.models.user_notification import UserNotification
 
 
 class Notification(Base):
     __tablename__ = "notifications"
 
-    user_id: Mapped[int] = mapped_column(
-        Integer, ForeignKey("users.id"), nullable=False, index=True
-    )
     title: Mapped[str] = mapped_column(String(200), nullable=False)
     body: Mapped[str] = mapped_column(String, nullable=False)
-    is_read: Mapped[bool] = mapped_column(Boolean, default=False)
 
-    # Chinned entity (optional)
+    # Chained entity (optional)
     request_id: Mapped[Optional[int]] = mapped_column(
         Integer, ForeignKey("requests.id"), nullable=True
     )
@@ -30,7 +27,6 @@ class Notification(Base):
     )
 
     # Relationships
-    user: Mapped["User"] = relationship("User", back_populates="notifications")
     request: Mapped["Optional[Request]"] = relationship(
         "Request", back_populates="notifications"
     )
@@ -39,4 +35,4 @@ class Notification(Base):
     )
 
     def __repr__(self) -> str:
-        return f"<Notification(id={self.id}, user_id={self.user_id}, is_read={self.is_read})>"
+        return f"<Notification(id={self.id}, request_id={self.request_id}, news_id={self.news_id})>"
