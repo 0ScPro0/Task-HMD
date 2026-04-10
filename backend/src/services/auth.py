@@ -233,7 +233,7 @@ class AuthService:
             raise AuthError("Invalid refresh token")
 
         # Get user from database
-        user: User = await self.user_repository.get(self.session, user_id)
+        user = await self.user_repository.get(self.session, user_id)
         if not user:
             raise AuthError("User not found")
 
