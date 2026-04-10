@@ -4,6 +4,7 @@ from database.models.base import Base
 from database.models.user import User
 from database.models.request import Request
 from database.models.notification import Notification
+from database.models.user_notification import UserNotification
 from database.models.news import News
 
 from database.types.user import UserRole
@@ -18,5 +19,6 @@ __all__ = [
     "RequestStatus",
     "RequestType",
     "Notification",
+    "UserNotification",
     "News",
 ]

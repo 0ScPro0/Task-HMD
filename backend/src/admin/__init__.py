@@ -10,6 +10,7 @@ from core.config import settings
 from admin.models.user import UserAdmin
 from admin.models.news import NewsAdmin
 from admin.models.notification import NotificationAdmin
+from admin.models.user_notification import UserNotificationAdmin
 from admin.models.request import RequestAdmin
 
 
@@ -43,6 +44,7 @@ def setup_admin(app: FastAPI, dev_mode: bool = False):
     admin.add_view(UserAdmin)
     admin.add_view(NewsAdmin)
     admin.add_view(NotificationAdmin)
+    admin.add_view(UserNotificationAdmin)
     admin.add_view(RequestAdmin)
 
     return admin
