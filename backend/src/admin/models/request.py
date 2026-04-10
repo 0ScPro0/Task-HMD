@@ -5,7 +5,8 @@ from database import Request
 class RequestAdmin(ModelView, model=Request):
     column_list = [
         Request.id,
-        Request.user_id,
+        Request.owner_id,
+        Request.executor_id,
         Request.type,
         Request.title,
         Request.status,
