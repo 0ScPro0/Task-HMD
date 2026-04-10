@@ -33,10 +33,12 @@ class NewsService(BaseService[News, NewsCreate, NewsUpdate, NewsRepository]):
 
     @log
     async def update_news(self, news_id: int, news: NewsUpdate) -> NewsResponse:
-        news = await self.repository.update(self.session, news_id, news)
-        return NewsResponse.model_validate(news)
+        updated_news = await self.repository.update(
+            self.session, update_object_id=news_id, object_in=news
+        )
+        return NewsResponse.model_validate(updated_news)
 
     @log
     async def delete_news(self, news_id: int) -> NewsResponse:
-        news = await self.repository.delete(self.session, news_id)
+        news = await self.repository.delete(self.session, id=news_id)
         return NewsResponse.model_validate(news)
