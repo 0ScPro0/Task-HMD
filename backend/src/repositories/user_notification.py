@@ -48,7 +48,7 @@ class UserNotificationRepository(
         self,
         session: AsyncSession,
         *,
-        user_notification: Union[UserNotification, Dict[str, Any]],
+        user_notification: Union[UserNotificationCreate, Dict[str, Any]],
     ):
         """
         Create UserNotification

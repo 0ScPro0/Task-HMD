@@ -44,13 +44,13 @@ class UserService(BaseService[User, UserCreate, UserUpdate, UserRepository]):
 
     @log
     async def update_user(self, user_id: int, user: UserUpdate) -> UserResponse:
-        user = await self.repository.update(
+        updated_user = await self.repository.update(
             self.session, update_object_id=user_id, object_in=user
         )
-        if not user:
+        if not updated_user:
             raise NotFoundError("User not found")
 
-        return UserResponse.model_validate(user)
+        return UserResponse.model_validate(updated_user)
 
     @log
     async def delete_user(self, user_id: int) -> UserResponse:
@@ -70,7 +70,7 @@ class UserService(BaseService[User, UserCreate, UserUpdate, UserRepository]):
 
     @log
     async def deactivate_user(self, user_id: int) -> UserResponse:
-        user = await self.repository.delete(self.session, user_id)
+        user = await self.repository.delete(self.session, id=user_id)
         if not user:
             raise NotFoundError("User not found")
 
