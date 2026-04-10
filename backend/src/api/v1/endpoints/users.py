@@ -35,7 +35,7 @@ async def update_current_user_profile(
 @router.get("", response_model=List[UserResponse])
 @log
 async def get_users(
-    skip: int,
+    skip: int = Query(0, ge=0, le=100),
     limit: int = Query(100, ge=1, le=1000),
     admin: User = Depends(get_current_admin),
     user_service: UserService = Depends(get_user_service),
