@@ -19,17 +19,16 @@ class BaseService(
         self.session = session
         self.repository = repository
 
-    async def get(self, id: int) -> ModelType:
-        return await self.repository.get(self.session, id)
-
-    async def get_many(self, ids: List[int]) -> List[ModelType]:
-        return await self.repository.get_many(self.session, ids)
+    async def get(self, id: int) -> Optional[ModelType]:
+        return await self.repository.get(self.session, id=id)
 
     async def create(self, schema: CreateSchemaType) -> ModelType:
         return await self.repository.create(self.session, object_in=schema)
 
     async def update(self, id: int, schema: UpdateSchemaType) -> Optional[ModelType]:
-        return await self.repository.update(self.session, id, schema)
+        return await self.repository.update(
+            self.session, update_object_id=id, object_in=schema
+        )
 
-    async def delete(self, id: int) -> ModelType:
-        return await self.repository.delete(self.session, id)
+    async def delete(self, id: int) -> Optional[ModelType]:
+        return await self.repository.delete(self.session, id=id)
