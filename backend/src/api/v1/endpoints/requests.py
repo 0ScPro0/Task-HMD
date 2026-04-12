@@ -24,24 +24,9 @@ async def create_request(
     request: RequestCreate,
     current_user: User = Depends(get_current_user),
     request_service: RequestService = Depends(get_request_service),
-    notification_service: NotificationService = Depends(get_notification_service),
 ):
     """Create request"""
-    created_request = await request_service.create_request(request=request)
-
-    # Create notification
-    notification = await notification_service.create_notification(
-        NotificationCreate(
-            title=created_request.title,
-            body=created_request.description,
-            request_id=created_request.id,
-            news_id=None,
-        )
-    )
-
-    await notification_service.send_notifications(notification=notification)
-
-    return RequestResponse.model_validate(created_request)
+    return await request_service.create_request(request=request)
 
 
 @router.get("/", response_model=List[RequestResponse])
@@ -84,6 +69,7 @@ async def executor_accept_request(
     request_id: int,
     current_user: User = Depends(get_current_user),
     request_service: RequestService = Depends(get_request_service),
+    notification_service: NotificationService = Depends(get_notification_service),
 ):
     """Executer accept specified request"""
 
@@ -91,9 +77,22 @@ async def executor_accept_request(
     if current_user.role == UserRole.RESIDENT:
         raise PermissionDeniedError("Only executers can response to request")
 
-    return await request_service.executor_accept_request(
+    updated_request = await request_service.executor_accept_request(
         request_id=request_id, user=current_user, executor_id=current_user.id
     )
+
+    # Create notification
+    notification = await notification_service.create_notification(
+        NotificationCreate(
+            title=updated_request.title,
+            body=updated_request.description,
+            request_id=updated_request.id,
+            news_id=None,
+        )
+    )
+
+    # Send notifications
+    await notification_service.send_notifications(notification=notification)
 
 
 @router.patch("/{request_id}/status", response_model=RequestResponse)
@@ -102,11 +101,25 @@ async def update_request_status(
     status: str,
     current_user: User = Depends(get_current_user),
     request_service: RequestService = Depends(get_request_service),
+    notification_service: NotificationService = Depends(get_notification_service),
 ):
     """Change status (admin or worker)"""
-    return await request_service.update_request_status(
+    updated_request = await request_service.update_request_status(
         user_id=current_user.id,
         user_role=current_user.role,
         request_id=request_id,
         status=status,
     )
+
+    # Create notification
+    notification = await notification_service.create_notification(
+        NotificationCreate(
+            title=updated_request.title,
+            body=updated_request.description,
+            request_id=updated_request.id,
+            news_id=None,
+        )
+    )
+
+    # Send notifications
+    await notification_service.send_notifications(notification=notification)

@@ -7,6 +7,7 @@ from database import RequestStatus, RequestType
 
 class RequestBase(BaseModel):
     type: RequestType
+    title: str
     description: str
     status: RequestStatus
     admin_comment: Optional[str]
