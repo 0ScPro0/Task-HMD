@@ -125,7 +125,7 @@ class NotificationService(BaseService):
         return created_notification
 
     @log
-    async def create_user_notifications(
+    async def send_notifications(
         self,
         *,
         notification: Notification,

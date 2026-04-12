@@ -40,7 +40,7 @@ class NewsAdmin(ModelView, model=News):
                 created_notification = await notification_service.create_notification(
                     notification
                 )
-                await notification_service.create_user_notifications(
+                await notification_service.send_notifications(
                     notification=created_notification
                 )
                 await session.commit()

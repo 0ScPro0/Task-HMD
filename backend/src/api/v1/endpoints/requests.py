@@ -3,11 +3,17 @@ from fastapi import APIRouter, Depends, Query
 from fastapi.responses import JSONResponse
 from fastapi.exceptions import HTTPException
 
-from api.dependencies import get_request_service, RequestService
+from api.dependencies import (
+    get_request_service,
+    get_notification_service,
+    RequestService,
+    NotificationService,
+)
 from core.security import get_current_user, get_current_admin
 from core.exceptions import CreateError, PermissionDeniedError
 from database import User, Request, UserRole
 from schemas.request import RequestCreate, RequestBase, RequestResponse, RequestUpdate
+from schemas.notification import NotificationCreate
 from utils.logger import log
 
 router = APIRouter(prefix="/requests", tags=["requests"])
@@ -18,12 +24,24 @@ async def create_request(
     request: RequestCreate,
     current_user: User = Depends(get_current_user),
     request_service: RequestService = Depends(get_request_service),
+    notification_service: NotificationService = Depends(get_notification_service),
 ):
     """Create request"""
-    try:
-        return await request_service.create_request(request=request)
-    except CreateError as e:
-        raise CreateError(e)
+    created_request = await request_service.create_request(request=request)
+
+    # Create notification
+    notification = await notification_service.create_notification(
+        NotificationCreate(
+            title=created_request.title,
+            body=created_request.description,
+            request_id=created_request.id,
+            news_id=None,
+        )
+    )
+
+    await notification_service.send_notifications(notification=notification)
+
+    return RequestResponse.model_validate(created_request)
 
 
 @router.get("/", response_model=List[RequestResponse])
@@ -61,19 +79,19 @@ async def delete_request(
     )
 
 
-@router.patch("/{request_id}/response", response_model=RequestResponse)
-async def response_executor_to_a_request(
+@router.patch("/{request_id}/accept", response_model=RequestResponse)
+async def executor_accept_request(
     request_id: int,
     current_user: User = Depends(get_current_user),
     request_service: RequestService = Depends(get_request_service),
 ):
-    """Executer responds to a request"""
+    """Executer accept specified request"""
 
     # Check user is not resident
     if current_user.role == UserRole.RESIDENT:
         raise PermissionDeniedError("Only executers can response to request")
 
-    return await request_service.update_request_executor(
+    return await request_service.executor_accept_request(
         request_id=request_id, user=current_user, executor_id=current_user.id
     )
 

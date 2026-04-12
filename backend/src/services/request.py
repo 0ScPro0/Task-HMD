@@ -98,7 +98,7 @@ class RequestService(
         return RequestResponse.model_validate(request)
 
     @log
-    async def create_request(self, request: RequestCreate) -> RequestResponse:
+    async def create_request(self, request: RequestCreate) -> Request:
         """
         Create request
 
@@ -113,7 +113,7 @@ class RequestService(
         )
         if not created_request:
             raise CreateError("Request was not created")
-        return RequestResponse.model_validate(created_request)
+        return created_request
 
     @log
     async def update_request(
@@ -137,7 +137,7 @@ class RequestService(
         return RequestResponse.model_validate(updated_request)
 
     @log
-    async def update_request_executor(
+    async def executor_accept_request(
         self, request_id: int, user: User, executor_id: int
     ) -> RequestResponse:
         """
