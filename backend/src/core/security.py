@@ -191,7 +191,7 @@ async def get_current_user(
         raise AuthError("Invalid token")
 
     # Get user
-    user: User = await user_repository.get(session, user_id)
+    user = await user_repository.get(session, id=user_id)
     if not user:
         raise AuthError("User not found")
 
