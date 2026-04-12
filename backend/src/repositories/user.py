@@ -205,7 +205,7 @@ class UserRepository(BaseRepository[User, UserCreate, UserUpdate]):
         Returns:
             bool: True if user is active, False otherwise
         """
-        user: User = await self.get(session=session, id=user_id)
+        user = await self.get(session=session, id=user_id)
         return user.is_active if user else False
 
 

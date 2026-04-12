@@ -19,7 +19,9 @@ class Request(Base):
     owner_id: Mapped[int] = mapped_column(
         Integer, ForeignKey("users.id"), nullable=False, index=True
     )
-    executor_id: Mapped[int] = mapped_column(Integer, ForeignKey("users.id"))
+    executor_id: Mapped[Optional[int]] = mapped_column(
+        Integer, ForeignKey("users.id"), nullable=True
+    )
     type: Mapped[RequestType] = mapped_column(Enum(RequestType), nullable=False)
     title: Mapped[str] = mapped_column(String(100), nullable=False)
     description: Mapped[str] = mapped_column(String, nullable=False)

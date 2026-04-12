@@ -14,16 +14,17 @@ class RequestBase(BaseModel):
 
 
 class RequestCreate(RequestBase):
-    user_id: int
+    owner_id: int
 
 
 class RequestUpdate(RequestBase):
-    user_id: int
+    owner_id: int
 
 
 class RequestResponse(RequestBase):
     id: int
-    user_id: int
+    owner_id: int
+    executor_id: Optional[int]
     created_at: datetime
     updated_at: datetime
 

@@ -45,7 +45,7 @@ class RequestRepository(BaseRepository[Request, RequestCreate, RequestUpdate]):
             List of requests or None if not found
         """
         requests = await self.get_by_field_many(
-            self, session, field_name="user_id", field_value=user_id, limit=limit
+            session, field_name="user_id", field_value=user_id, limit=limit
         )
         return requests
 
@@ -63,9 +63,28 @@ class RequestRepository(BaseRepository[Request, RequestCreate, RequestUpdate]):
         request = await self.get_request(session, request_id=request_id)
         return request.status
 
+    async def create_request(
+        self,
+        session: AsyncSession,
+        *,
+        request_object: Union[RequestCreate, Dict[str, Any]]
+    ) -> Request:
+        """
+        Create Request
+
+        Args:
+            session: Database session
+            request_object: requestCreate object or dict
+
+        Returns:
+            Created Request object
+        """
+        request = await self.create(session=session, object_in=request_object)
+        return request
+
     async def update_request_executor(
         self, session: AsyncSession, request_id: int, executor_id: int
-    ) -> Request:
+    ) -> Optional[Request]:
         """
         Update Request executor
 
@@ -87,7 +106,7 @@ class RequestRepository(BaseRepository[Request, RequestCreate, RequestUpdate]):
 
     async def update_request_status(
         self, session: AsyncSession, *, request_id: int, status: str
-    ) -> Request:
+    ) -> Optional[Request]:
         """
         Update Request status
 
@@ -106,7 +125,7 @@ class RequestRepository(BaseRepository[Request, RequestCreate, RequestUpdate]):
 
     async def update_request_executor_and_status(
         self, session: AsyncSession, request_id: int, executor_id: int, status: str
-    ) -> Request:
+    ) -> Optional[Request]:
         """
         Update Request executor and status
 
@@ -126,25 +145,6 @@ class RequestRepository(BaseRepository[Request, RequestCreate, RequestUpdate]):
             fields=fields,
         )
         return updated_request
-
-    async def create_request(
-        self,
-        session: AsyncSession,
-        *,
-        request_object: Union[RequestCreate, Dict[str, Any]]
-    ) -> Request:
-        """
-        Create Request
-
-        Args:
-            session: Database session
-            request_object: requestCreate object or dict
-
-        Returns:
-            Created Request object
-        """
-        request = await self.create(session=session, object_in=request_object)
-        return request
 
     async def is_request_has_executor(
         self, session: AsyncSession, *, request_id: int
