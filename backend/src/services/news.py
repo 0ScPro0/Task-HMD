@@ -1,6 +1,7 @@
 from typing import Any, List, Optional
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from core.exceptions import NotFoundError
 from database import News
 from repositories import NewsRepository
 from schemas.news import NewsCreate, NewsUpdate, NewsResponse
@@ -29,16 +30,8 @@ class NewsService(BaseService[News, NewsCreate, NewsUpdate, NewsRepository]):
     @log
     async def get_news(self, news_id: int) -> NewsResponse:
         news = await self.repository.get(self.session, news_id)
-        return NewsResponse.model_validate(news)
 
-    @log
-    async def update_news(self, news_id: int, news: NewsUpdate) -> NewsResponse:
-        updated_news = await self.repository.update(
-            self.session, update_object_id=news_id, object_in=news
-        )
-        return NewsResponse.model_validate(updated_news)
+        if not news:
+            raise NotFoundError("News not found")
 
-    @log
-    async def delete_news(self, news_id: int) -> NewsResponse:
-        news = await self.repository.delete(self.session, id=news_id)
         return NewsResponse.model_validate(news)
