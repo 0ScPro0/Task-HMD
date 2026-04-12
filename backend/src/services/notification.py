@@ -1,8 +1,22 @@
 from typing import Any, List, Optional
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy import select
 
-from database import User, Notification, UserNotification
-from repositories import NotificationRepository, UserNotificationRepository
+from core.exceptions import ValidationError, NotFoundError, NoRecipientsError
+from database import (
+    User,
+    Notification,
+    UserNotification,
+    Request,
+    RequestType,
+    UserRole,
+)
+from repositories import (
+    NotificationRepository,
+    UserNotificationRepository,
+    UserRepository,
+    RequestRepository,
+)
 from schemas.notification import (
     NotificationCreate,
     NotificationUpdate,
@@ -22,10 +36,14 @@ class NotificationService(BaseService):
         session: AsyncSession,
         notification_repository: NotificationRepository,
         user_notification_repository: UserNotificationRepository,
+        user_repository: UserRepository,
+        request_repository: RequestRepository,
     ):
-        self.session = (session,)
+        self.session = session
         self.notification_repository = notification_repository
         self.user_notification_repository = user_notification_repository
+        self.user_repository = user_repository
+        self.request_repository = request_repository
 
     @log
     async def get_all_notifications(
@@ -74,6 +92,7 @@ class NotificationService(BaseService):
             )
         return responses
 
+    @log
     async def read_notification(
         self, user_notification_id: int
     ) -> FullNotificationResponse:
@@ -96,22 +115,104 @@ class NotificationService(BaseService):
     async def create_notification(
         self, notification: NotificationCreate
     ) -> Notification:
+        if notification.request_id and notification.news_id:
+            raise ValidationError(
+                "Notification cannot have both request_id and news_id"
+            )
         created_notification = await self.notification_repository.create_notification(
             self.session, notification_object=notification
         )
         return created_notification
 
-    async def create_user_notification(
+    @log
+    async def create_user_notifications(
         self,
         *,
-        user: User,
-        user_notification: UserNotificationCreate,
         notification: Notification,
-    ):
-        # TODO make create user notification logic
-        # if notification.news_id != None - all users
-        # if notification.request_id != None - to roles
-        ...
+    ) -> FullNotificationResponse:
+        """
+        Create UserNotification to all users, which meet the conditions:
+        1) if notification.news_id != None - all users
+        2) if notification.request_id != None - to users with same role
+
+        Args:
+            notification: Notification object to be checked
+
+        Returns:
+            FullNotificationResponse that was sent to users
+        """
+        un = None  # user notification
+
+        if notification.news_id is not None:
+            # Create notification for all active users
+            users = await self.user_repository.get_many(
+                self.session, skip=0, limit=10000, order_by=None
+            )
+            for target_user in users:
+                if target_user.is_active:
+                    # Last user notification will be used to return
+                    un = await self.user_notification_repository.create_user_notification(
+                        self.session,
+                        user_notification=UserNotificationCreate(
+                            user_id=target_user.id,
+                            notification_id=notification.id,
+                            is_read=False,
+                        ),
+                    )
+
+        elif notification.request_id is not None:
+            # Create notification for users with specific roles based on request
+            # Get request to determine target roles
+            request = await self.request_repository.get_request(
+                self.session, request_id=notification.request_id
+            )
+            if not request:
+                raise NotFoundError("Request not found")
+
+            if request:
+                # Determine target roles based on request type
+                # Always notify admin
+                target_roles = [UserRole.ADMIN]
+
+                # Map request type to relevant role
+                type_to_role = {
+                    RequestType.PLUMBER: UserRole.PLUMBER,
+                    RequestType.ELECTRICIAN: UserRole.ELECTRICIAN,
+                }
+                role = type_to_role.get(request.type)
+                if role:
+                    target_roles.append(role)
+
+                # Get users with target roles
+                all_users = await self.user_repository.get_many(
+                    self.session, skip=0, limit=10000, order_by=None
+                )
+                for target_user in all_users:
+                    if target_user.is_active and target_user.role in target_roles:
+                        # Last user notification will be used to return
+                        un = await self.user_notification_repository.create_user_notification(
+                            self.session,
+                            user_notification=UserNotificationCreate(
+                                user_id=target_user.id,
+                                notification_id=notification.id,
+                                is_read=False,
+                            ),
+                        )
+
+        if not un:
+            raise NoRecipientsError("No recipients found for notification")
+
+        return FullNotificationResponse(
+            is_read=un.is_read,
+            user_id=un.user_id,
+            notification_id=notification.id,
+            id=un.id,
+            created_at=notification.created_at,
+            updated_at=notification.updated_at,
+            read_at=un.read_at,
+            title=notification.title,
+            body=notification.body,
+        )
 
     @log
     async def update_notification(
