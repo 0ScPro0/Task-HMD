@@ -2,6 +2,7 @@ from typing import Any, Dict, Generic, List, Optional, Set, Type, TypeVar, Union
 from pydantic import BaseModel
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, or_
+from sqlalchemy.orm import selectinload
 from sqlalchemy.sql.expression import func
 
 from utils.logger import logger, log_database_queries
@@ -99,6 +100,7 @@ class BaseRepository(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
         skip: int = 0,
         limit: int = 100,
         order_by: Any = None,
+        relationships: List[str] = None,
     ) -> List[ModelType]:
         """
         Get many objects by field value
@@ -121,13 +123,20 @@ class BaseRepository(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
         if not order_by:
             order_by = self.model.id
 
-        result = await session.execute(
+        query = (
             select(self.model)
             .where(getattr(self.model, field_name) == field_value)
             .offset(skip)
             .limit(limit)
             .order_by(order_by)
         )
+
+        # Loading related objects
+        if relationships:
+            for rel in relationships:
+                query = query.options(selectinload(getattr(self.model, rel)))
+
+        result = await session.execute(query)
         return list(result.scalars().all())
 
     async def get_by_fields(
