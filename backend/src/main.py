@@ -28,7 +28,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-setup_admin(app, True)
+setup_admin(app, settings.security.dev_mode)
 
 if __name__ == "__main__":
     uvicorn.run(

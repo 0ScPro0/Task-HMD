@@ -34,10 +34,7 @@ class SecurityConfig(BaseModel):
     algorithm: str = Field(default="HS256")
     access_token_expire_minutes: int = Field(default=30)
     refresh_token_expire_days: int = Field(default=30)
-    environment: str = Field(
-        default="development",
-        description="Environment: development, staging, production",
-    )
+    dev_mode: bool = Field(default=False)
 
 
 class DateConfig(BaseModel):
