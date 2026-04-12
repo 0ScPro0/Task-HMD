@@ -42,6 +42,7 @@ class UserNotificationRepository(
             skip=skip,
             limit=limit,
             order_by=order_by,
+            relationships=["notification"],
         )
 
     async def create_user_notification(
