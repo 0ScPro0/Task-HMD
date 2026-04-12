@@ -1,5 +1,6 @@
-from typing import Any, Dict, Optional
+from typing import Annotated, Any, Dict, Mapping, Optional
 
+from annotated_doc import Doc
 from fastapi import HTTPException, status
 
 
@@ -43,6 +44,32 @@ class HTTPNotImplementedError(HTTPException):
         self, detail: Any = None, headers: Optional[Dict[str, Any]] = None
     ) -> None:
         super().__init__(status.HTTP_501_NOT_IMPLEMENTED, detail, headers)
+
+
+class BadRequestError(HTTPException):
+    def __init__(
+        self, detail: Any = None, headers: Optional[Dict[str, Any]] = None
+    ) -> None:
+        super().__init__(status.HTTP_400_BAD_REQUEST, detail, headers)
+
+
+class UnprocessableError(HTTPException):
+    def __init__(
+        self, detail: Any = None, headers: Optional[Dict[str, Any]] = None
+    ) -> None:
+        super().__init__(status.HTTP_422_UNPROCESSABLE_CONTENT, detail, headers)
+
+
+class NoRecipientsError(HTTPException):
+    def __init__(self, detail: str = "No recipients found for notification"):
+        super().__init__(status_code=500, detail=detail)
+
+
+class ConflictError(HTTPException):
+    def __init__(
+        self, detail: Any = None, headers: Optional[Dict[str, Any]] = None
+    ) -> None:
+        super().__init__(status.HTTP_409_CONFLICT, detail, headers)
 
 
 class ValidationError(HTTPException):
