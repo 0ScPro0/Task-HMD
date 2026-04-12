@@ -14,3 +14,4 @@ class NotificationAdmin(ModelView, model=Notification):
         "created_at",
         "updated_at",
     ]
+    can_create = False

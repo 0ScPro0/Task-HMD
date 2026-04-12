@@ -15,3 +15,4 @@ class UserNotificationAdmin(ModelView, model=UserNotification):
         "created_at",
         "updated_at",
     ]
+    can_create = False
