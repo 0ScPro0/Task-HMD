@@ -18,3 +18,5 @@ class RequestAdmin(ModelView, model=Request):
         "created_at",
         "updated_at",
     ]
+
+    can_create = False
