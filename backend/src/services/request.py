@@ -64,11 +64,38 @@ class RequestService(
         Returns:
             List of RequestResponse
         """
-        requests = await self.repository.get_requests_by_user(
-            self.session, user_id=user.id, limit=limit
+        requests = await self.repository.get_requests_by_owner(
+            self.session, owner_id=user.id, limit=limit
         )
         if not requests:
             raise NotFoundError("User has not any requests")
+        return [RequestResponse.model_validate(request) for request in requests]
+
+    @log
+    async def get_new_requests_by_role(
+        self,
+        role: UserRole,
+        limit: Optional[int] = 100,
+    ) -> Optional[List[RequestResponse]]:
+        """
+        Get new requests for the role.
+        Used only by executers.
+
+        Args:
+            user_id: User id
+            limit: Number of requests to return
+
+        Returns:
+            List of RequestResponse
+        """
+        if role not in [UserRole.PLUMBER, UserRole.ELECTRICIAN]:
+            raise PermissionDeniedError("Not enough permissions")
+
+        requests = await self.repository.get_requests_by_role(
+            self.session, role=role, limit=limit, status=RequestStatus.NEW
+        )
+        if not requests:
+            return []
         return [RequestResponse.model_validate(request) for request in requests]
 
     @log
@@ -159,6 +186,10 @@ class RequestService(
             raise PermissionDeniedError(
                 "Only admin or executer with same role can update request executer"
             )
+
+        # Check executor does not respond to his own request
+        if request.owner_id == user.id:
+            raise PermissionDeniedError("Can not respond to your own requests")
 
         # Check if the status needs to be changed to in_progress
         if request.status == RequestStatus.NEW:

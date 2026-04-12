@@ -20,6 +20,7 @@ router = APIRouter(prefix="/requests", tags=["requests"])
 
 
 @router.post("/create", response_model=RequestResponse)
+@log
 async def create_request(
     request: RequestCreate,
     current_user: User = Depends(get_current_user),
@@ -30,6 +31,7 @@ async def create_request(
 
 
 @router.get("/", response_model=List[RequestResponse])
+@log
 async def get_requests(
     skip: int = Query(0, ge=0),
     limit: int = Query(100, ge=1, le=1000),
@@ -42,7 +44,35 @@ async def get_requests(
     )
 
 
+@router.get("/my", response_model=List[RequestResponse])
+@log
+async def get_user_requests(
+    limit: int = Query(100, ge=1, le=1000),
+    current_user: User = Depends(get_current_user),
+    request_service: RequestService = Depends(get_request_service),
+):
+    """List of user requests"""
+    return await request_service.get_requests_by_user(user=current_user, limit=limit)
+
+
+@router.get("/new", response_model=Optional[List[RequestResponse]])
+@log
+async def get_new_requests_by_user_role(
+    limit: int = Query(100, ge=1, le=1000),
+    current_user: User = Depends(get_current_user),
+    request_service: RequestService = Depends(get_request_service),
+):
+    """
+    Get new requests for the role.
+    Used only by executers
+    """
+    return await request_service.get_new_requests_by_role(
+        role=current_user.role, limit=limit
+    )
+
+
 @router.get("/{request_id}", response_model=RequestResponse)
+@log
 async def get_request_by_id(
     request_id: int,
     current_user: User = Depends(get_current_user),
@@ -53,6 +83,7 @@ async def get_request_by_id(
 
 
 @router.delete("/{request_id}", response_model=RequestResponse)
+@log
 async def delete_request(
     request_id: int,
     current_user: User = Depends(get_current_user),
@@ -65,6 +96,7 @@ async def delete_request(
 
 
 @router.patch("/{request_id}/accept", response_model=RequestResponse)
+@log
 async def executor_accept_request(
     request_id: int,
     current_user: User = Depends(get_current_user),
@@ -84,7 +116,7 @@ async def executor_accept_request(
     # Create notification
     notification = await notification_service.create_notification(
         NotificationCreate(
-            title=updated_request.title,
+            title="Отклик на заявку: " + updated_request.title,
             body=updated_request.description,
             request_id=updated_request.id,
             news_id=None,
@@ -96,6 +128,7 @@ async def executor_accept_request(
 
 
 @router.patch("/{request_id}/status", response_model=RequestResponse)
+@log
 async def update_request_status(
     request_id: int,
     status: str,
@@ -114,7 +147,7 @@ async def update_request_status(
     # Create notification
     notification = await notification_service.create_notification(
         NotificationCreate(
-            title=updated_request.title,
+            title="Изменение в заявке: " + updated_request.title,
             body=updated_request.description,
             request_id=updated_request.id,
             news_id=None,

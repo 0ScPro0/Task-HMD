@@ -31,12 +31,12 @@ class RequestAdmin(ModelView, model=Request):
     ) -> None:
         await super().after_model_change(data, model, is_created, request)
 
-        if is_created:
+        if not is_created:
             async for session in get_db_session():
                 notification_service = await get_notification_service(session)
 
                 notification = NotificationCreate(
-                    title=data.get("title", "Новая новость"),
+                    title="Изменение в заявке: " + data.get("title", "Заявка"),
                     body=data.get("description", ""),
                     request_id=model.id,
                     news_id=None,
