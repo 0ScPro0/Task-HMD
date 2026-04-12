@@ -211,7 +211,7 @@ async def get_current_admin(
     Uses get_current_user from core.security and checks role.
     """
     if current_user.role != "admin":
-        raise PermissionDeniedError("Admin privileges required")
+        raise PermissionDeniedError("Not enough permissions")
 
     if not current_user.is_active:
         raise AuthError(detail="Account inactive")

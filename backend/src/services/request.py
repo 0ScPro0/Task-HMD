@@ -40,7 +40,7 @@ class RequestService(
             List of requests
         """
         if user.role != UserRole.ADMIN:
-            PermissionDeniedError("Only admin can get")
+            PermissionDeniedError("Not enough permissions")
         requests = await self.repository.get_many(
             self.session, skip=skip, limit=limit, order_by=order_by
         )
