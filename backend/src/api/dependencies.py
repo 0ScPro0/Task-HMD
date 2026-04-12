@@ -54,9 +54,13 @@ async def get_request_service(
 async def get_notification_service(
     session: AsyncSession = Depends(get_db_session),
 ) -> NotificationService:
-    """Get notification_ service"""
+    """Get notification service"""
     return NotificationService(
-        session, notification_repository, user_notification_repository
+        session,
+        notification_repository,
+        user_notification_repository,
+        user_repository,
+        request_repository,
     )
 
 
