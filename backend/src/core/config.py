@@ -1,7 +1,7 @@
 from typing import Optional
 from pathlib import Path
-from pydantic import BaseModel, Field
-from pydantic_settings import BaseSettings
+from pydantic import BaseModel, Field, ConfigDict
+from pydantic_settings import BaseSettings, SettingsConfigDict
 from datetime import timezone
 
 BASE_DIR = Path(__file__).parent.parent.parent  # backend.src.core.config
@@ -42,8 +42,7 @@ class DateConfig(BaseModel):
     date_format: str = "%Y-%m-%d"
     utc: timezone = timezone.utc
 
-    class Config:
-        arbitrary_types_allowed = True
+    model_config = ConfigDict(arbitrary_types_allowed=True)
 
 
 class Settings(BaseSettings):
@@ -52,11 +51,12 @@ class Settings(BaseSettings):
     security: SecurityConfig = Field(default_factory=SecurityConfig)
     date: DateConfig = DateConfig()
 
-    class Config:
-        env_nested_delimiter = "__"
-        env_file = BASE_DIR / ".env"
-        env_file_encoding = "utf-8"
-        case_sensitive = False
+    model_config = SettingsConfigDict(
+        env_nested_delimiter="__",
+        env_file=BASE_DIR / ".env",
+        env_file_encoding="utf-8",
+        case_sensitive=False,
+    )
 
 
 settings = Settings()
