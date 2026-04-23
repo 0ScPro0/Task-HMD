@@ -202,7 +202,7 @@ class BaseRepository(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
         *,
         update_object_id: int,
         object_in: Union[UpdateSchemaType, Dict[str, Any]],
-    ) -> ModelType:
+    ) -> Optional[ModelType]:
         """
         Update object
 
@@ -214,9 +214,10 @@ class BaseRepository(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
         Returns:
             Updated object
         """
-        database_object: ModelType = await self.get(
-            session, update_object_id
-        )  # type: ignore
+        database_object = await self.get(session, update_object_id)
+
+        if not database_object:
+            return None
 
         if isinstance(object_in, dict):
             update_data = object_in
