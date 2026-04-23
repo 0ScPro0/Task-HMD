@@ -163,11 +163,5 @@ async def test_get_news_existing_returns_valid_response(
 
 @pytest.mark.asyncio
 async def test_get_news_nonexistent_raises_not_found(news_service: NewsService):
-    from src.core.exceptions import NotFoundError as CoreNotFoundError
-
-    print(f"Test NotFoundError: {NotFoundError}")
-    print(f"Core NotFoundError: {CoreNotFoundError}")
-    print(f"Same class? {NotFoundError is CoreNotFoundError}")
-
     with pytest.raises(NotFoundError):
         await news_service.get_news(9999)
