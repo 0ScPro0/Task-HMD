@@ -265,7 +265,6 @@ class AuthService:
             access_token_expires_in=access_token_expires_in,
         )
 
-    @log
     async def _store_refresh_token(self, user_id, refresh_token: str) -> bool:
         """
         Store refresh token in database
