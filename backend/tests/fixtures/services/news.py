@@ -6,11 +6,10 @@ import pytest_asyncio
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
-# Assuming these imports match your project structure
 from src.database import News
 from src.repositories import NewsRepository
-from src.schemas.news import NewsCreate, NewsUpdate
-from src.services.news import NewsService
+from src.services import NewsService
+from src.schemas.news import NewsCreate
 
 
 # ============================================================
