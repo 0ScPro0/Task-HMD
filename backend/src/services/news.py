@@ -20,7 +20,7 @@ class NewsService(BaseService[News, NewsCreate, NewsUpdate, NewsRepository]):
 
     @log
     async def get_news_list(
-        self, skip: int = 0, limit: int = 0, order_by: Optional[Any] = None
+        self, skip: int = 0, limit: int = 100, order_by: Optional[Any] = None
     ) -> List[NewsResponse]:
         news_list = await self.repository.get_many(
             self.session, skip=skip, limit=limit, order_by=order_by
