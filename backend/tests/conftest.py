@@ -99,5 +99,6 @@ def patch_log_database_queries():
 # ============================================================
 
 pytest_plugins = [
-    "tests.fixtures.services.news",
+    "tests.fixtures.news",
+    "tests.fixtures.user",
 ]
