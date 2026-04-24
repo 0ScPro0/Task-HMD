@@ -1,15 +1,10 @@
-from typing import Dict, List
-
-import sys
+from typing import List
 
 import pytest
-from unittest.mock import MagicMock
-from sqlalchemy import desc
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.database import User, UserRole
+from src.database import UserRole
 from src.services import UserService
-from src.schemas.user import UserUpdate, UserUpdatePassword
 from schemas.user import UserResponse  # type: ignore
 from core.exceptions import NotFoundError  # type: ignore
 
