@@ -338,12 +338,10 @@ class BaseRepository(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
         if not object:
             return None
 
-        # Check field exists
+        # Update fields
         for name, value in fields.items():
-            if value is None:
-                logger.warning(f"Field {name} is None, skip it")
-                continue
 
+            # Check field exists
             if not hasattr(object, name):
                 raise AttributeError(
                     f"Model {self.model.__name__} has no field '{name}'"
@@ -357,7 +355,6 @@ class BaseRepository(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
             setattr(object, name, value)
 
         # Save
-        session.add(object)
         await session.commit()
         await session.refresh(object)
 
