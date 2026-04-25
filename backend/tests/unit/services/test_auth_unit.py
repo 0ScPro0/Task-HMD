@@ -36,7 +36,7 @@ from src.utils.serializator import resolve_phone
 @pytest.mark.asyncio
 async def test_register_with_correct_data(
     auth_service: AuthService, register_request_schema_factory
-):
+) -> RegisterResponse:
     """Verify that user data correctly save in database."""
     register_request = register_request_schema_factory(
         email="test@example.com",
@@ -60,8 +60,10 @@ async def test_register_with_correct_data(
     assert response.user.apartment == register_request.apartment
     assert response.user.phone == register_request.phone
     assert response.user.role == register_request.role
-    assert response.access_token  # Check token exists
-    assert response.refresh_token  # Check token exists
+    assert response.access_token is not None  # Check token exists
+    assert response.refresh_token is not None  # Check token exists
+
+    return response
 
 
 @pytest.mark.asyncio
@@ -155,3 +157,194 @@ async def test_register_check_same_password(
 
     # Password hashs must not be the same
     assert user.password_hash != hash_password("test_password")
+
+
+# ============================================================
+# TESTS: login
+# ============================================================
+
+
+@pytest.mark.asyncio
+async def test_login_with_correct_data(
+    auth_service: AuthService,
+    user_create_schema_factory,
+    register_request_schema_factory,
+    login_request_schema_factory,
+):
+    """Verify that user can login with correct data"""
+
+    # Register user
+    register_request = register_request_schema_factory(
+        email="test@example.com",
+        name="Foo",
+        surname="Bar",
+        patronymic="Barovich",
+        address="Walt st.",
+        apartment="12",
+        phone="+79275424895",
+        role=UserRole.RESIDENT,
+        password="test_password",
+    )
+
+    register_response = await auth_service.register(request=register_request)
+
+    # Login user
+    login_request = login_request_schema_factory(
+        email="test@example.com",
+        name="Foo",
+        surname="Bar",
+        patronymic="Barovich",
+        address="Walt st.",
+        apartment="12",
+        phone="+79275424895",
+        role=UserRole.RESIDENT,
+        password="test_password",
+    )
+
+    login_response = await auth_service.login(login_request)
+
+    assert login_response.user.id == register_response.user.id
+    assert login_response.user.email == register_response.user.email
+    assert login_response.user.name == register_response.user.name
+    assert login_response.user.surname == register_response.user.surname
+    assert login_response.user.patronymic == register_response.user.patronymic
+    assert login_response.user.address == register_response.user.address
+    assert login_response.user.apartment == register_response.user.apartment
+    assert login_response.user.phone == register_response.user.phone
+    assert login_response.user.role == register_response.user.role
+    assert login_response.access_token is not None  # Check token exists
+    assert login_response.refresh_token is not None  # Check token exists
+
+
+# ============================================================
+# TESTS: logout
+# ============================================================
+
+
+@pytest.mark.asyncio
+async def test_logout(
+    test_session: AsyncSession,
+    user_service: UserService,
+    auth_service: AuthService,
+    register_request_schema_factory,
+    login_request_schema_factory,
+):
+    """Verify that user can logout"""
+    # Register user
+    register_request = register_request_schema_factory(
+        email="test@example.com",
+        name="Foo",
+        surname="Bar",
+        patronymic="Barovich",
+        address="Walt st.",
+        apartment="12",
+        phone="+79275424895",
+        role=UserRole.RESIDENT,
+        password="test_password",
+    )
+
+    await auth_service.register(request=register_request)
+
+    # Login user
+    login_request = login_request_schema_factory(
+        email="test@example.com",
+        name="Foo",
+        surname="Bar",
+        patronymic="Barovich",
+        address="Walt st.",
+        apartment="12",
+        phone="+79275424895",
+        role=UserRole.RESIDENT,
+        password="test_password",
+    )
+    login_response = await auth_service.login(login_request)
+
+    # Logout user
+    assert await auth_service.logout(user_id=login_response.user.id) is True
+
+    # Check that user do not have refresh token
+    user = await user_service.repository.get_user(
+        test_session, user_id=login_response.user.id
+    )
+    assert user.refresh_token is None
+
+
+# ============================================================
+# TESTS: get user from token
+# ============================================================
+
+
+@pytest.mark.asyncio
+async def test_get_user_from_token_after_register(
+    auth_service: AuthService,
+    register_request_schema_factory,
+):
+    """Verify that user can get user from token"""
+
+    # Register user
+    register_request = register_request_schema_factory(
+        email="test@example.com",
+        name="Foo",
+        surname="Bar",
+        patronymic="Barovich",
+        address="Walt st.",
+        apartment="12",
+        phone="+79275424895",
+        role=UserRole.RESIDENT,
+        password="test_password",
+    )
+
+    register_response = await auth_service.register(request=register_request)
+
+    # Get User object from token
+    user = await auth_service.get_current_user(register_response.access_token)
+
+    assert user.id == register_response.user.id
+
+
+@pytest.mark.asyncio
+async def test_get_user_from_token_after_login(
+    auth_service: AuthService,
+    register_request_schema_factory,
+    login_request_schema_factory,
+):
+    """Verify that user can get user from token"""
+
+    # Register user
+    register_request = register_request_schema_factory(
+        email="test@example.com",
+        name="Foo",
+        surname="Bar",
+        patronymic="Barovich",
+        address="Walt st.",
+        apartment="12",
+        phone="+79275424895",
+        role=UserRole.RESIDENT,
+        password="test_password",
+    )
+
+    await auth_service.register(request=register_request)
+
+    # Login user
+    login_request = login_request_schema_factory(
+        email="test@example.com",
+        name="Foo",
+        surname="Bar",
+        patronymic="Barovich",
+        address="Walt st.",
+        apartment="12",
+        phone="+79275424895",
+        role=UserRole.RESIDENT,
+        password="test_password",
+    )
+    login_response = await auth_service.login(login_request)
+
+    # Get User object from token
+    user = await auth_service.get_current_user(login_response.access_token)
+
+    assert user.id == login_response.user.id
+
+
+# ============================================================
+# TESTS: refresh token
+# ============================================================
