@@ -1,4 +1,5 @@
 from datetime import datetime, timezone
+from typing import Optional
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from core.config import settings
@@ -158,7 +159,7 @@ class AuthService:
         )
 
     @log
-    async def logout(self, user_id: int):
+    async def logout(self, user_id: int) -> bool:
         """
         Logout user by clearing refresh token
 
@@ -166,17 +167,15 @@ class AuthService:
             user_id (int): User ID
 
         Returns:
-            True if successful
+            True if successful, False otherwise
         """
         # Clear refresh token in database
-        await self.user_repository.clear_refresh_token(
+        return await self.user_repository.clear_refresh_token(
             session=self.session, user_id=user_id
         )
 
-        return True
-
     @log
-    async def get_current_user(self, token: str):
+    async def get_current_user(self, token: str) -> User:
         """
         Get current user from token
 
@@ -198,6 +197,13 @@ class AuthService:
         user_id = payload.get("sub")
         if not user_id:
             raise AuthError("Invalid token")
+
+        # Get user from database
+        user = await self.user_repository.get_user(self.session, user_id=user_id)
+        if not user:
+            raise AuthError("User not found")
+
+        return user
 
     @log
     async def refresh_token(
