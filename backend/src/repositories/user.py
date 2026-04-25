@@ -118,9 +118,7 @@ class UserRepository(BaseRepository[User, UserCreate, UserUpdate]):
         )
         return updated_user
 
-    async def clear_refresh_token(
-        self, session: AsyncSession, *, user_id: int
-    ) -> Optional[User]:
+    async def clear_refresh_token(self, session: AsyncSession, *, user_id: int) -> bool:
         """
         Clear user refresh token (set to None)
 
@@ -129,14 +127,21 @@ class UserRepository(BaseRepository[User, UserCreate, UserUpdate]):
             user_id: int
 
         Returns:
-            Updated user object or None if not found
+            True if successful, False otherwise
         """
         updated_user = await self.update_fields(
             session=session,
             object_id=user_id,
             fields={"refresh_token": None, "refresh_token_expires_at": None},
         )
-        return updated_user
+
+        if (
+            updated_user.refresh_token is None
+            and updated_user.refresh_token_expires_at is None
+        ):
+            return True
+
+        return False
 
     async def activate(self, session: AsyncSession, *, user_id: int) -> Optional[User]:
         """
