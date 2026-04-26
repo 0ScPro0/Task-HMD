@@ -177,7 +177,7 @@ class RequestService(
         Returns:
             RequestResponse
         """
-        request = await self.get_request(request_id=request_id, user=user.id)
+        request = await self.get_request(request_id=request_id, user=user)
         if not request:
             raise NotFoundError("Request not found")
 
