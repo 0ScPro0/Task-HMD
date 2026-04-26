@@ -182,7 +182,7 @@ class RequestService(
             raise NotFoundError("Request not found")
 
         # Check user is admin or request executor with same role
-        if user.role != UserRole.ADMIN or request.type != user.role:
+        if user.role != UserRole.ADMIN and request.type != user.role:
             raise PermissionDeniedError(
                 "Only admin or executer with same role can update request executer"
             )
@@ -225,7 +225,7 @@ class RequestService(
             raise NotFoundError("Request not found")
 
         # Check user is admin or request executor
-        if user_role != UserRole.ADMIN or request.executor_id != user_id:
+        if user_role != UserRole.ADMIN and request.executor_id != user_id:
             raise PermissionDeniedError(
                 "Only admin or request executer can change request status"
             )
@@ -257,8 +257,8 @@ class RequestService(
         # Check user is admin, request owner or executor
         if (
             user_role != UserRole.ADMIN
-            or request.owner_id != user_id
-            or request.executor_id != user_id
+            and request.owner_id != user_id
+            and request.executor_id != user_id
         ):
             raise PermissionDeniedError(
                 "Only admin, worker or request owner can delete request"
