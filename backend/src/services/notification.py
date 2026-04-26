@@ -49,7 +49,18 @@ class NotificationService(BaseService):
     async def get_all_notifications(
         self, skip: int = 0, limit: int = 100, order_by: Optional[Any] = None
     ) -> List[NotificationResponse]:
-        notifications = await self.repository.get_many(
+        """
+        Get all notifications
+
+        Args:
+            skip: Number of notifications to skip
+            limit: Number of notifications to return
+            order_by: Order by field
+
+        Returns:
+            List of NotificationResponse
+        """
+        notifications = await self.notification_repository.get_many(
             self.session, skip=skip, limit=limit, order_by=order_by
         )
         return [
@@ -59,7 +70,18 @@ class NotificationService(BaseService):
 
     @log
     async def get_notification(self, notification_id: int) -> NotificationResponse:
-        notification = await self.repository.get(self.session, notification_id)
+        """
+        Get notification by id
+
+        Args:
+            notification_id: Notification id
+
+        Returns:
+            NotificationResponse
+        """
+        notification = await self.notification_repository.get(
+            self.session, notification_id
+        )
         return NotificationResponse.model_validate(notification)
 
     @log
@@ -70,6 +92,18 @@ class NotificationService(BaseService):
         limit: Optional[int] = 100,
         order_by: Optional[int] = None,
     ) -> List[FullNotificationResponse]:
+        """
+        Get user notifications
+
+        Args:
+            user: User instance
+            skip: Number of notifications to skip
+            limit: Number of notifications to return
+            order_by: Order by field
+
+        Returns:
+            List of FullNotificationResponse
+        """
         user_notifications = (
             await self.user_notification_repository.get_user_notifications(
                 self.session, user_id=user.id, skip=skip, limit=limit, order_by=order_by
@@ -96,9 +130,22 @@ class NotificationService(BaseService):
     async def read_notification(
         self, user_notification_id: int
     ) -> FullNotificationResponse:
+        """
+        Set UserNotification.is_read to True
+
+        Args:
+            user_notification_id: UserNotification id
+
+        Returns:
+            FullNotificationResponse that was read
+        """
         un = await self.user_notification_repository.read_user_notification(
             self.session, user_notification_id=user_notification_id
         )
+
+        if not un:
+            raise NotFoundError("UserNotification not found")
+
         return FullNotificationResponse(
             is_read=un.is_read,
             user_id=un.user_id,
@@ -115,6 +162,15 @@ class NotificationService(BaseService):
     async def create_notification(
         self, notification: NotificationCreate
     ) -> Notification:
+        """
+        Create notification
+
+        Args:
+            notification: NotificationCreate object
+
+        Returns:
+            Notification object
+        """
         if notification.request_id and notification.news_id:
             raise ValidationError(
                 "Notification cannot have both request_id and news_id"
@@ -218,12 +274,39 @@ class NotificationService(BaseService):
     async def update_notification(
         self, notification_id: int, notification: NotificationUpdate
     ) -> NotificationResponse:
-        updated_notification = await self.repository.update(
+        """
+        Update notification
+
+        Args:
+            notification_id: Notification id
+            notification: NotificationUpdate object
+
+        Returns:
+            NotificationResponse object or None if not found
+        """
+        updated_notification = await self.notification_repository.update(
             self.session, update_object_id=notification_id, object_in=notification
         )
+
+        if updated_notification is None:
+            raise NotFoundError("Notification not found")
         return NotificationResponse.model_validate(updated_notification)
 
     @log
     async def delete_notification(self, notification_id: int) -> NotificationResponse:
-        notification = await self.repository.delete(self.session, id=notification_id)
-        return NotificationResponse.model_validate(notification)
+        """
+        Delete notification
+
+        Args:
+            notification_id: Notification id
+
+        Returns:
+            NotificationResponse object or None if not found
+        """
+        deleted_notification = await self.notification_repository.delete(
+            self.session, id=notification_id
+        )
+        if deleted_notification is None:
+            raise NotFoundError("Notification not found")
+
+        return NotificationResponse.model_validate(deleted_notification)
