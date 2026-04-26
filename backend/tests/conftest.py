@@ -102,4 +102,6 @@ pytest_plugins = [
     "tests.fixtures.news",
     "tests.fixtures.user",
     "tests.fixtures.auth",
+    "tests.fixtures.notification",
+    "tests.fixtures.request",
 ]
