@@ -40,7 +40,7 @@ class RequestService(
             List of requests
         """
         if user.role != UserRole.ADMIN:
-            PermissionDeniedError("Not enough permissions")
+            raise PermissionDeniedError("Not enough permissions")
         requests = await self.repository.get_many(
             self.session, skip=skip, limit=limit, order_by=order_by
         )
@@ -246,8 +246,12 @@ class RequestService(
             user_id: User id
             request_id: Request id
 
+        Raises:
+            NotFoundError: If request not found
+            PermissionDeniedError: If user is not admin, request owner or executor
+
         Returns:
-            True if request was deleted else False
+            True if request was deleted, raise NotFoundError otherwise
         """
         # Get request
         request = await self.repository.get(self.session, id=request_id)
@@ -265,4 +269,6 @@ class RequestService(
             )
 
         deleted_request = await self.repository.delete(self.session, id=request_id)
+        if not deleted_request:
+            raise NotFoundError("Request not found")
         return True
