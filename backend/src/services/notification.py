@@ -2,7 +2,7 @@ from typing import Any, List, Optional
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 
-from core.exceptions import ValidationError, NotFoundError, NoRecipientsError
+from core.exceptions import ServiceValidationError, NotFoundError, NoRecipientsError
 from database import (
     User,
     Notification,
@@ -172,7 +172,7 @@ class NotificationService(BaseService):
             Notification object
         """
         if notification.request_id and notification.news_id:
-            raise ValidationError(
+            raise ServiceValidationError(
                 "Notification cannot have both request_id and news_id"
             )
         created_notification = await self.notification_repository.create_notification(
