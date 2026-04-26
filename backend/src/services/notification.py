@@ -76,12 +76,19 @@ class NotificationService(BaseService):
         Args:
             notification_id: Notification id
 
+        Raises:
+            NotFoundError: If notification not found
+
         Returns:
             NotificationResponse
         """
         notification = await self.notification_repository.get(
             self.session, notification_id
         )
+
+        if not notification:
+            raise NotFoundError("Notification not found")
+
         return NotificationResponse.model_validate(notification)
 
     @log
