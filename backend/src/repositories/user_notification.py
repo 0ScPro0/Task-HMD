@@ -2,7 +2,7 @@ from typing import Dict, List, Optional, Any, Union
 from pydantic import BaseModel
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
-from datetime import datetime
+from datetime import datetime, timezone
 
 from repositories.base import BaseRepository
 from database import UserNotification
@@ -68,7 +68,7 @@ class UserNotificationRepository(
         session: AsyncSession,
         *,
         user_notification_id: int,
-    ):
+    ) -> Optional[UserNotification]:
         """
         Set UserNotification.is_read to True
 
@@ -77,13 +77,13 @@ class UserNotificationRepository(
             user_id: Specific User id
 
         Returns:
-            True if succes, otherwise False
+            UserNotification or None if not found
         """
-        return await self.update_field(
-            session=session,
-            object_id=user_notification_id,
-            field_name="is_read",
-            field_value=True,
+
+        fields = {"is_read": True, "read_at": datetime.now(timezone.utc)}
+
+        return await self.update_fields(
+            session=session, object_id=user_notification_id, fields=fields
         )
 
 
