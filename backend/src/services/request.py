@@ -118,8 +118,8 @@ class RequestService(
             raise NotFoundError("Request not found")
         if (
             user.role != UserRole.ADMIN
-            or request.owner_id != user.id
-            or request.executor_id != user.id
+            and request.owner_id != user.id
+            and request.executor_id != user.id
         ):
             raise PermissionDeniedError("Only admin, owner or executor can get request")
         return RequestResponse.model_validate(request)
