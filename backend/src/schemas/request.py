@@ -15,10 +15,12 @@ class RequestBase(BaseModel):
 
 class RequestCreate(RequestBase):
     owner_id: int
+    executor_id: Optional[int] = None
 
 
 class RequestUpdate(RequestBase):
     owner_id: int
+    executor_id: Optional[int] = None
 
 
 class RequestResponse(RequestBase):
