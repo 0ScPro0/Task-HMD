@@ -19,8 +19,7 @@ class RequestCreate(RequestBase):
 
 
 class RequestUpdate(RequestBase):
-    owner_id: int
-    executor_id: Optional[int] = None
+    pass
 
 
 class RequestResponse(RequestBase):
