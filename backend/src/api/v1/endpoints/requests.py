@@ -57,8 +57,8 @@ async def get_user_requests(
 
 @router.get("/new", response_model=Optional[List[RequestResponse]])
 @log
-async def get_new_requests_by_user_role(
-    limit: int = Query(100, ge=1, le=1000),
+async def get_new_requests_by_executor_role(
+    limit: int = Query(100, ge=1, le=10000),
     current_user: User = Depends(get_current_user),
     request_service: RequestService = Depends(get_request_service),
 ):
@@ -66,8 +66,8 @@ async def get_new_requests_by_user_role(
     Get new requests for the role.
     Used only by executers
     """
-    return await request_service.get_new_requests_by_role(
-        role=current_user.role, limit=limit
+    return await request_service.get_new_requests_by_executor_role(
+        executor=current_user, limit=limit
     )
 
 
@@ -91,7 +91,7 @@ async def delete_request(
 ):
     """Delete request (only owner, executor or admin)"""
     return await request_service.delete_request(
-        user_id=current_user.id, user_role=current_user.role, request_id=request_id
+        user=current_user, request_id=request_id
     )
 
 
@@ -110,7 +110,7 @@ async def executor_accept_request(
         raise PermissionDeniedError("Only executers can response to request")
 
     updated_request = await request_service.executor_accept_request(
-        request_id=request_id, user=current_user, executor_id=current_user.id
+        request_id=request_id, executor=current_user
     )
 
     # Create notification
@@ -138,8 +138,7 @@ async def update_request_status(
 ):
     """Change status (admin or worker)"""
     updated_request = await request_service.update_request_status(
-        user_id=current_user.id,
-        user_role=current_user.role,
+        user=current_user,
         request_id=request_id,
         status=status,
     )
