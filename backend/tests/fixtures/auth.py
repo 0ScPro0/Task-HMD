@@ -35,9 +35,7 @@ def register_request_schema_factory() -> Callable[..., RegisterRequest]:
 
 
 @pytest.fixture(scope="function")
-def login_request_schema_factory(
-    user_test_data_factory,
-) -> Callable[..., LoginRequest]:
+def login_request_schema_factory() -> Callable[..., LoginRequest]:
     """
     Factory to create valid LoginRequest Pydantic schemas.
     Useful for testing service input validation and repository methods.
@@ -50,9 +48,7 @@ def login_request_schema_factory(
 
 
 @pytest.fixture(scope="function")
-def token_refresh_request_schema_factory(
-    user_test_data_factory,
-) -> Callable[..., TokenRefreshRequest]:
+def token_refresh_request_schema_factory() -> Callable[..., TokenRefreshRequest]:
     """
     Factory to create valid TokenRefreshRequest Pydantic schemas.
     Useful for testing service input validation and repository methods.
