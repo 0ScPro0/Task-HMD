@@ -12,7 +12,7 @@ from core.security import (
     decode_token,
 )
 
-from database import User
+from database import User, UserRole
 from repositories import UserRepository
 
 from schemas.auth import (
@@ -76,6 +76,9 @@ class AuthService:
             role=request.role,
             password_hash=password_hash,
         )
+
+        if user_create.role != UserRole.RESIDENT:
+            raise AuthError("Can register only as a resident")
 
         # Create user in database
         user = await self.user_repository.create_user(
