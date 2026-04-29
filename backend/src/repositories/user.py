@@ -6,6 +6,7 @@ from datetime import datetime
 
 from repositories.base import BaseRepository
 from database.models.user import User
+from database.types.user import UserRole
 from schemas.user import UserCreate, UserUpdate
 
 from utils.logger import log_database_queries
@@ -49,6 +50,37 @@ class UserRepository(BaseRepository[User, UserCreate, UserUpdate]):
         fields = {"phone": phone, "email": email}
         user = await self.get_by_fields(session=session, fields=fields)
         return user
+
+    async def get_users_by_role(
+        self,
+        session: AsyncSession,
+        *,
+        role: UserRole,
+        skip: int = 0,
+        limit: int = 100,
+        order_by: Any = None,
+        relationships: List[str] = None,
+    ) -> List[User]:
+        """
+        Get users by role
+
+        Args:
+            session: Database session
+            role: str
+
+        Returns:
+            List of User objects
+        """
+        users = await self.get_by_field_many(
+            session=session,
+            field_name="role",
+            field_value=role,
+            skip=skip,
+            limit=limit,
+            order_by=order_by,
+            relationships=relationships,
+        )
+        return users
 
     async def create_user(
         self, session: AsyncSession, *, user_object: Union[UserCreate, Dict[str, Any]]
