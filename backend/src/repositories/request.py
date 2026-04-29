@@ -15,7 +15,11 @@ class RequestRepository(BaseRepository[Request, RequestCreate, RequestUpdate]):
     """Class for request specific Request operations"""
 
     async def get_request(
-        self, session: AsyncSession, *, request_id: int
+        self,
+        session: AsyncSession,
+        *,
+        request_id: int,
+        relationships: Optional[List[str]] = None,
     ) -> Optional[Request]:
         """
         Get Request by id
@@ -27,7 +31,7 @@ class RequestRepository(BaseRepository[Request, RequestCreate, RequestUpdate]):
         Returns:
             Request or None if not found
         """
-        request = await self.get(session, id=request_id)
+        request = await self.get(session, id=request_id, relationships=relationships)
         return request
 
     async def get_requests_by_owner(
