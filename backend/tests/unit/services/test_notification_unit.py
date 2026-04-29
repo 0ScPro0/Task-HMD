@@ -24,7 +24,7 @@ from src.repositories import (
     NotificationRepository,
     UserNotificationRepository,
 )
-from src.services import NotificationService
+from src.services import NotificationService, UserService, RequestService
 from src.schemas.notification import (
     NotificationCreate,
     NotificationResponse,
@@ -693,6 +693,20 @@ async def test_send_notifications_request_no_recipients_raises_error(
     7.3 Отправка запроса без получателей - notification.request_id=1, request существует, но нет пользователей с нужными ролями
     - ожидать NoRecipientsError
     """
+    # Create User
+    user_repo = UserRepository(User)
+    user = await user_repo.create(
+        test_session,
+        object_in={
+            "name": "Роман",
+            "surname": "Мамонов",
+            "patronymic": "Александрович",
+            "phone": "+79271564832",
+            "role": "resident",
+            "password_hash": "very_secure_password",
+        },
+    )
+
     # Create a request
     request_repo = RequestRepository(Request)
     request = await request_repo.create(
@@ -702,7 +716,7 @@ async def test_send_notifications_request_no_recipients_raises_error(
             "description": "Test",
             "type": RequestType.ELECTRICIAN,
             "status": RequestStatus.NEW,
-            "owner_id": 1,
+            "owner_id": user.id,
         },
     )
 
