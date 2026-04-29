@@ -21,7 +21,9 @@ class BaseRepository(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
         self.model = model
 
     @log_database_queries
-    async def get(self, session: AsyncSession, id: Any) -> Optional[ModelType]:
+    async def get(
+        self, session: AsyncSession, id: Any, relationships: Optional[List[str]] = None
+    ) -> Optional[ModelType]:
         """
         Get object by id
 
@@ -32,7 +34,14 @@ class BaseRepository(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
         Returns:
             Object or None if not found
         """
-        result = await session.execute(select(self.model).where(self.model.id == id))
+        query = select(self.model).where(self.model.id == id)
+
+        # Loading related objects
+        if relationships:
+            for rel in relationships:
+                query = query.options(selectinload(getattr(self.model, rel)))
+
+        result = await session.execute(query)
         return result.scalar_one_or_none()
 
     @log_database_queries
