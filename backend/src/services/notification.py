@@ -227,7 +227,9 @@ class NotificationService(BaseService):
             # Create notification for users with specific roles based on request
             # Get request to determine target roles
             request = await self.request_repository.get_request(
-                self.session, request_id=notification.request_id
+                self.session,
+                request_id=notification.request_id,
+                relationships=["owner"],
             )
             if not request:
                 raise NotFoundError("Request not found")
@@ -246,17 +248,21 @@ class NotificationService(BaseService):
                 if role:
                     target_roles.append(role)
 
-                # Get users with target roles
-                all_users = await self.user_repository.get_many(
-                    self.session, skip=0, limit=10000, order_by=None
+                # Get executors with target roles
+                target_users = await self.user_repository.get_users_by_role(
+                    self.session, role=role, skip=0, limit=10000, order_by=None
                 )
-                for target_user in all_users:
-                    if target_user.is_active and target_user.role in target_roles:
+
+                # Add request owner to list
+                target_users.append(request.owner)
+
+                for u in target_users:
+                    if u.is_active:
                         # Last user notification will be used to return
                         un = await self.user_notification_repository.create_user_notification(
                             self.session,
                             user_notification=UserNotificationCreate(
-                                user_id=target_user.id,
+                                user_id=u.id,
                                 notification_id=notification.id,
                                 is_read=False,
                             ),
