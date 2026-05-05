@@ -35,3 +35,13 @@ class NewsService(BaseService[News, NewsCreate, NewsUpdate, NewsRepository]):
             raise NotFoundError("News not found")
 
         return NewsResponse.model_validate(news)
+
+    @log
+    async def get_last_news(self) -> NewsResponse:
+        news_list = await self.repository.get_many(
+            self.session, limit=1, order_by=News.created_at.desc()
+        )
+        if not news_list:
+            raise NotFoundError("News not found")
+
+        return NewsResponse.model_validate(news_list[0])

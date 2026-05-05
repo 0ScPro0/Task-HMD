@@ -11,7 +11,7 @@ from utils.logger import log
 router = APIRouter(prefix="/news", tags=["news"])
 
 
-@router.get("/news", response_model=List[NewsResponse])
+@router.get("/", response_model=List[NewsResponse])
 async def get_news(
     skip: int = Query(0, ge=0),
     limit: int = Query(100, ge=1, le=1000),
@@ -24,7 +24,16 @@ async def get_news(
     )
 
 
-@router.get("/news/{news_id}", response_model=NewsResponse)
+@router.get("/last", response_model=NewsResponse)
+async def get_last_news(
+    current_user: User = Depends(get_current_user),
+    news_service: NewsService = Depends(get_news_service),
+):
+    """Get last news"""
+    return await news_service.get_last_news()
+
+
+@router.get("/{news_id}", response_model=NewsResponse)
 async def get_news_by_id(
     news_id: int,
     current_user: User = Depends(get_current_user),
