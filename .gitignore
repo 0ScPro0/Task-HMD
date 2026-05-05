@@ -150,6 +150,9 @@ frontend/.storybook-out/
 frontend/tmp/
 frontend/temp/
 
+# Prototypes
+frontend/prototypes/
+
 # ==================== DOCKER ====================
 
 # Docker
