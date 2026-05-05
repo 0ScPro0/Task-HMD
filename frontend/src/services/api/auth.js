@@ -9,14 +9,20 @@ const getAuthStore = () => {
 };
 
 export const authService = {
-    async register(email, phone, password) {
-        // Send request
-        const response = await apiClient.post('/auth/register', {
-            email,
+    async register(email, name, surname, patronymic, address, apartment, phone, password) {
+        // Формируем объект, преобразуя необязательные поля в null
+        const payload = {
+            email: email && email.trim() ? email : null,
+            name,
+            surname,
+            patronymic: patronymic && patronymic.trim() ? patronymic : null,
+            address: address && address.trim() ? address : null,
+            apartment: apartment && apartment.trim() ? apartment : null,
             phone,
-            password
-        });
+            password,
+        };
         
+        const response = await apiClient.post('/auth/register', payload);
         return response;
     },
 

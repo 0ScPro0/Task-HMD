@@ -38,13 +38,13 @@ export function Register() {
         }
 
         // Валидация email
-        if (!form.email.includes("@")) {
+        if (form.email && !form.email.includes("@")) {
             setError("Введите корректный email")
             return
         }
 
         // Валидация обязательных полей
-        if (!form.email || !form.phone || !form.lastName || !form.firstName || !form.password) {
+        if (!form.phone || !form.lastName || !form.firstName || !form.password) {
             setError("Заполните обязательные поля")
             return
         }
@@ -53,12 +53,23 @@ export function Register() {
 
         try {
             // Вызов API регистрации
-            const response = await authService.register(form.email, form.password)
+            const response = await authService.register(
+                form.email, 
+                form.firstName, 
+                form.lastName,
+                form.middleName, 
+                form.address, 
+                form.apartment, 
+                form.phone, 
+                form.password,   
+            )
+
             // После успешной регистрации перенаправляем в Home
             if (response.status === 200){
                 navigate("/")
             }
         } catch (err) {
+            console.error(err);
             setError(err.response?.data?.detail || "Ошибка регистрации. Попробуйте позже.")
         } finally {
             setIsLoading(false)
@@ -74,7 +85,7 @@ export function Register() {
                     <form onSubmit={handleSubmit}>
                         <div className={styles.formGroup}>
                             <label className={styles.formLabel} htmlFor="email">
-                                Email
+                                Email <span className={styles.optional}>(опционально)</span>
                             </label>
                             <input
                                 className={styles.formInput}
@@ -83,7 +94,6 @@ export function Register() {
                                 placeholder="example@mail.ru"
                                 value={form.email}
                                 onChange={handleChange}
-                                required
                             />
                         </div>
                         <div className={styles.formGroup}>
@@ -215,9 +225,6 @@ export function Register() {
                     </form>
                     <Link to="/login" className={styles.authLink}>
                         Войти
-                    </Link>
-                    <Link to="/login-executor" className={styles.authLink}>
-                        Я работник ЖЭУ
                     </Link>
                 </div>
             </main>

@@ -86,9 +86,6 @@ export function Login() {
                     <Link to="/register" className={styles.authLink}>
                         Зарегистрироваться
                     </Link>
-                    <Link to="/login-executor" className={styles.authLink}>
-                        Я работник ЖЭУ
-                    </Link>
                 </div>
             </main>
             <Footer />

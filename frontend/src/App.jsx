@@ -5,7 +5,6 @@ import { Home } from './pages/Home/Home'
 import { News } from './pages/News/News'
 import { Login } from './pages/Login/Login'
 import { Register } from './pages/Register/Register'
-import { LoginExecutor } from './pages/LoginExecutor/LoginExecutor'
 import { Me } from './pages/Me/Me'
 import { Request } from './pages/Request/Request'
 
@@ -18,7 +17,6 @@ function AppContent() {
             <Route path="/" element={<Home/>} />
             <Route path="/register" element={<Register/>} />
             <Route path="/login" element={<Login/>} />
-            <Route path="/login-executor" element={<LoginExecutor/>} />
             <Route path="/me" element={<Me/>} />
             <Route path="/news" element={<News/>} />
             <Route path="/request" element={<Request/>} />

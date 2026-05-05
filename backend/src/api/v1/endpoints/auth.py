@@ -25,8 +25,6 @@ async def register(
     """
     Register a new user
     """
-    if request.role != "resident":
-        raise PermissionDeniedError("Can only register as a resident")
     return await auth_service.register(request)
 
 
