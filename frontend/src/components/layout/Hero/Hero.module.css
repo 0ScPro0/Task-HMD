@@ -1,0 +1,22 @@
+.hero {
+    background: linear-gradient(135deg, #e0eff9 0%, #f0f6fc 100%);
+    border: 1px solid #c8ddf0;
+    border-radius: 10px;
+    padding: 40px 36px;
+    margin-top: 28px;
+    text-align: center;
+}
+
+.hero__title {
+    font-size: 28px;
+    font-weight: 700;
+    color: #2b5e8a;
+    margin-bottom: 10px;
+}
+
+.hero__text {
+    font-size: 15px;
+    color: #5a6b7d;
+    max-width: 560px;
+    margin: 0 auto;
+}

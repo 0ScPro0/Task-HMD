@@ -1,0 +1,38 @@
+.newsCard {
+    background: #ffffff;
+    border: 1px solid #d6e4f0;
+    border-radius: 8px;
+    padding: 24px 28px;
+    margin-bottom: 8px;
+}
+
+.newsCard__date {
+    font-size: 13px;
+    color: #93a4b5;
+    margin-bottom: 6px;
+}
+
+.newsCard__heading {
+    font-size: 17px;
+    font-weight: 600;
+    color: #2d3748;
+    margin-bottom: 8px;
+}
+
+.newsCard__body {
+    font-size: 14px;
+    color: #5a6b7d;
+    line-height: 1.65;
+}
+
+.newsCard__link {
+    display: inline-block;
+    margin-top: 10px;
+    font-size: 14px;
+    color: #2b7cbf;
+    font-weight: 500;
+}
+
+.newsCard__link:hover {
+    text-decoration: underline;
+}

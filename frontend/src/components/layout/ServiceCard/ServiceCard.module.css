@@ -1,0 +1,44 @@
+.serviceCard {
+    background: #ffffff;
+    border: 1px solid #d6e4f0;
+    border-radius: 8px;
+    padding: 28px 24px;
+    text-align: center;
+    cursor: pointer;
+    transition: border-color 0.2s, box-shadow 0.2s, transform 0.15s;
+}
+
+.serviceCard:hover {
+    border-color: #8fbde3;
+    box-shadow: 0 3px 12px rgba(43, 124, 191, 0.10);
+    transform: translateY(-2px);
+}
+
+.serviceCard__icon {
+    width: 48px;
+    height: 48px;
+    margin: 0 auto 14px;
+    background: #e8f1fa;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.serviceCard__icon svg {
+    width: 26px;
+    height: 26px;
+    color: #2b7cbf;
+}
+
+.serviceCard__name {
+    font-size: 16px;
+    font-weight: 600;
+    color: #2d3748;
+}
+
+.serviceCard__desc {
+    font-size: 13px;
+    color: #718096;
+    margin-top: 4px;
+}
