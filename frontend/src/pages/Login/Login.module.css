@@ -1,0 +1,116 @@
+.login {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    background: #f5f8fb;
+    font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+    color: #333;
+    line-height: 1.5;
+}
+
+.main {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+}
+
+.authCard {
+    background: #ffffff;
+    border: 1px solid #d6e4f0;
+    border-radius: 10px;
+    padding: 32px 28px;
+    width: 100%;
+    max-width: 400px;
+    box-shadow: 0 2px 12px rgba(43, 124, 191, 0.08);
+}
+
+.authTitle {
+    font-size: 22px;
+    font-weight: 600;
+    color: #2b5e8a;
+    text-align: center;
+    margin-bottom: 24px;
+}
+
+.formGroup {
+    margin-bottom: 16px;
+}
+
+.formLabel {
+    display: block;
+    font-size: 14px;
+    color: #4a5568;
+    margin-bottom: 6px;
+    font-weight: 500;
+}
+
+.formInput {
+    width: 100%;
+    padding: 10px 14px;
+    font-size: 14px;
+    border: 1px solid #c8ddf0;
+    border-radius: 6px;
+    background: #fafcfe;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    outline: none;
+}
+
+.formInput:focus {
+    border-color: #2b7cbf;
+    box-shadow: 0 0 0 3px rgba(43, 124, 191, 0.12);
+}
+
+.error {
+    color: #e53e3e;
+    font-size: 14px;
+    margin-top: 8px;
+    text-align: center;
+}
+
+.btnSubmit {
+    width: 100%;
+    padding: 12px;
+    margin-top: 8px;
+    background: #2b7cbf;
+    color: #fff;
+    font-size: 15px;
+    font-weight: 600;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.btnSubmit:hover {
+    background: #1a5a94;
+}
+
+.btnSubmit:disabled {
+    background: #a0aec0;
+    cursor: not-allowed;
+}
+
+.authLink {
+    display: block;
+    text-align: center;
+    margin-top: 20px;
+    font-size: 14px;
+    color: #2b7cbf;
+    font-weight: 500;
+    transition: color 0.2s;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+.authLink:hover {
+    color: #1a5a94;
+    text-decoration: underline;
+}
+
+@media (max-width: 480px) {
+    .authCard {
+        padding: 24px 20px;
+    }
+}

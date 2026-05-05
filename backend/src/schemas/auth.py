@@ -22,11 +22,19 @@ class TokenRefreshResponse(BaseModel):
     access_token_expires_in: int
 
 
-class LoginRequest(UserBase):
+class LoginRequest(BaseModel):
+    phone: str = Field(..., min_length=9, max_length=15)
     password: str = Field(..., min_length=8, max_length=72)
 
 
-class RegisterRequest(UserBase):
+class RegisterRequest(BaseModel):
+    email: Optional[EmailStr] = Field(None, max_length=255)
+    name: str = Field(..., min_length=3, max_length=100)
+    surname: str = Field(..., min_length=3, max_length=100)
+    patronymic: Optional[str] = Field(None, min_length=3, max_length=100)
+    address: Optional[str] = Field(None, min_length=3, max_length=100)
+    apartment: Optional[str] = Field(None, min_length=1, max_length=20)
+    phone: str = Field(..., min_length=9, max_length=15)
     password: str = Field(..., min_length=8, max_length=72)
 
 

@@ -73,12 +73,9 @@ class AuthService:
             address=request.address,
             apartment=request.apartment,
             phone=phone,
-            role=request.role,
+            role=UserRole.RESIDENT,
             password_hash=password_hash,
         )
-
-        if user_create.role != UserRole.RESIDENT:
-            raise AuthError("Can register only as a resident")
 
         # Create user in database
         user = await self.user_repository.create_user(
@@ -126,7 +123,7 @@ class AuthService:
 
         # Get user by phone or email
         user = await self.user_repository.get_user_by_phone_or_email(
-            self.session, phone=request.phone, email=request.email
+            self.session, phone=phone, email=None
         )
         if not user:
             raise AuthError("Invalid credentials")
