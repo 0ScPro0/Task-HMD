@@ -15,10 +15,9 @@ router = APIRouter(prefix="/users", tags=["users"])
 @log
 async def get_current_user_profile(
     current_user: User = Depends(get_current_user),
-    user_service: UserService = Depends(get_user_service),
 ):
     """Get current user profile"""
-    return await user_service.get_user(user_id=current_user.id)
+    return current_user
 
 
 @router.patch("/me", response_model=UserResponse)

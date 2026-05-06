@@ -22,7 +22,6 @@ def setup_admin(app: FastAPI, dev_mode: bool = False):
         secret_key=settings.security.secret_key,
         session_cookie="admin_session",
         max_age=3600,  # 1 hour session
-        https_only=True,  # Force HTTPS in production
         same_site="lax",
     )
 

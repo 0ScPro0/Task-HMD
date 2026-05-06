@@ -7,6 +7,7 @@ import { Login } from './pages/Login/Login'
 import { Register } from './pages/Register/Register'
 import { Me } from './pages/Me/Me'
 import { Request } from './pages/Request/Request'
+import { AdminRedirect } from './pages/AdminRedirect/AdminRedirect'
 
 import { AuthLoader } from './components/auth/AuthLoader/AuthLoader'
 import { ProtectedRoute } from './components/auth/ProtectedRoute/ProtectedRoute'
@@ -18,6 +19,11 @@ function AppContent() {
                 <Route path="/" element={<Home/>} />
                 <Route path="/register" element={<Register/>} />
                 <Route path="/login" element={<Login/>} />
+                <Route path="/admin" element={
+                    <ProtectedRoute>
+                        <AdminRedirect/>
+                    </ProtectedRoute>
+                } />
                 <Route path="/me" element={
                     <ProtectedRoute>
                         <Me/>

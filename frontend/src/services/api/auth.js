@@ -23,16 +23,23 @@ export const authService = {
         };
         
         const response = await apiClient.post('/auth/register', payload);
+        
+        // Store tokens and user data in auth store
+        if (response.data?.access_token && response.data?.refresh_token) {
+            const { setTokens } = getAuthStore();
+            setTokens(response.data.access_token, response.data.refresh_token, response.data.user);
+        }
+        
         return response;
     },
 
     async login(phone, password) {
         const response = await apiClient.post('/auth/login', { phone, password });
         
-        // Store tokens in auth store
+        // Store tokens and user data in auth store
         if (response.data?.access_token && response.data?.refresh_token) {
             const { setTokens } = getAuthStore();
-            setTokens(response.data.access_token, response.data.refresh_token);
+            setTokens(response.data.access_token, response.data.refresh_token, response.data.user);
         }
         
         return response;
@@ -43,9 +50,9 @@ export const authService = {
         const response = await apiClient.post('/auth/refresh', { refresh_token: refreshToken });
         
         if (response.data?.access_token) {
-            const { setTokens, refreshToken: currentRefreshToken } = getAuthStore();
+            const { setTokens, refreshToken: currentRefreshToken, user } = getAuthStore();
             const newRefreshToken = response.data.refresh_token || currentRefreshToken;
-            setTokens(response.data.access_token, newRefreshToken);
+            setTokens(response.data.access_token, newRefreshToken, user);
         }
         
         return response.data; // Возвращаем data, а не весь response
@@ -59,5 +66,16 @@ export const authService = {
             const { clearTokens } = getAuthStore();
             clearTokens();
         }
-    }
+    },
+    
+    async getCurrentUser() {
+            try {
+                const response = await apiClient.get('/users/me');
+                return response.data;
+            } catch (error) {
+                console.error('Ошибка получения текущего пользователя:', error);
+                throw error;
+            }
+    },
+
 };
