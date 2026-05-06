@@ -78,7 +78,6 @@ export function Register() {
 
     return (
         <div className={styles.register}>
-            <Header />
             <main className={styles.main}>
                 <div className={styles.authCard}>
                     <h1 className={styles.authTitle}>Регистрация</h1>

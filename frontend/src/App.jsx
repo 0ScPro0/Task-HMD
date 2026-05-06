@@ -8,30 +8,42 @@ import { Register } from './pages/Register/Register'
 import { Me } from './pages/Me/Me'
 import { Request } from './pages/Request/Request'
 
-import { useAuthInit } from './hooks/useAuth'
+import { AuthLoader } from './components/auth/AuthLoader/AuthLoader'
+import { ProtectedRoute } from './components/auth/ProtectedRoute/ProtectedRoute'
 
 function AppContent() {
-    useAuthInit();
     return (
-        <Routes>
-            <Route path="/" element={<Home/>} />
-            <Route path="/register" element={<Register/>} />
-            <Route path="/login" element={<Login/>} />
-            <Route path="/me" element={<Me/>} />
-            <Route path="/news" element={<News/>} />
-            <Route path="/request" element={<Request/>} />
-        </Routes>
+        <AuthLoader>
+            <Routes>
+                <Route path="/" element={<Home/>} />
+                <Route path="/register" element={<Register/>} />
+                <Route path="/login" element={<Login/>} />
+                <Route path="/me" element={
+                    <ProtectedRoute>
+                        <Me/>
+                    </ProtectedRoute>
+                } />
+                <Route path="/news" element={
+                    <ProtectedRoute>
+                        <News/>
+                    </ProtectedRoute>
+                } />
+                <Route path="/request" element={
+                    <ProtectedRoute>
+                        <Request/>
+                    </ProtectedRoute>
+                } />
+            </Routes>
+        </AuthLoader>
     )
 }
 
 function App() {
-  return (
-    <>
+    return (
         <BrowserRouter>
             <AppContent/>
         </BrowserRouter>
-    </>
-  )
+    )
 }
 
 export default App

@@ -12,7 +12,6 @@ class NewsAdmin(ModelView, model=News):
         News.id,
         News.title,
         News.is_published,
-        News.content,
     ]
 
     form_excluded_columns = [

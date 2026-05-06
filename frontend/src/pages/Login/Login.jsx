@@ -41,7 +41,7 @@ export function Login() {
 
     return (
         <div className={styles.login}>
-            <Header />
+            
             <main className={styles.main}>
                 <div className={styles.authCard}>
                     <h1 className={styles.authTitle}>Вход в личный кабинет</h1>

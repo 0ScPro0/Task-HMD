@@ -4,14 +4,12 @@ import { Hero } from "../../components/layout/Hero/Hero"
 import { NewsCard } from "../../components/layout/NewsCard/NewsCard"
 import { ServiceCard } from "../../components/layout/ServiceCard/ServiceCard"
 import { Footer } from "../../components/layout/Footer/Footer"
+import { useNavigate } from "react-router-dom"
 
 export function Home() {
-    const handlePlumberClick = () => {
-        alert('Заявка сантехнику будет доступна в ближайшее время.')
-    }
-
-    const handleElectricianClick = () => {
-        alert('Заявка электрику будет доступна в ближайшее время.')
+    const navigate = useNavigate();
+    const handleRequestClick = () => {
+        navigate('/request')
     }
 
     return (
@@ -36,7 +34,7 @@ export function Home() {
                         }
                         name="Вызов сантехника"
                         description="Устранение протечек, засоров, замена труб"
-                        onClick={handlePlumberClick}
+                        onClick={handleRequestClick}
                     />
                     <ServiceCard
                         icon={
@@ -47,7 +45,7 @@ export function Home() {
                         }
                         name="Вызов электрика"
                         description="Ремонт проводки, замена светильников, автоматов"
-                        onClick={handleElectricianClick}
+                        onClick={handleRequestClick}
                     />
                 </div>
             </main>

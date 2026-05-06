@@ -6,14 +6,86 @@
     background: #fff;
     border: 1px solid #c8ddf0;
     border-radius: 8px;
-    padding: 20px 28px;
-    font-size: 14px;
-    color: #718096;
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
     z-index: 200;
-    min-width: 220px;
+    min-width: 320px;
+    max-width: 400px;
+    max-height: 500px;
+    overflow: hidden;
+    flex-direction: column;
 }
 
 .notifyPopup.active {
-    display: block;
+    display: flex;
+}
+
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 20px;
+    border-bottom: 1px solid #e2e8f0;
+    background-color: #f8fafc;
+}
+
+.title {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 600;
+    color: #2d3748;
+}
+
+.badge {
+    background-color: #2b7cbf;
+    color: white;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 12px;
+    min-width: 20px;
+    text-align: center;
+}
+
+.content {
+    flex: 1;
+    overflow-y: auto;
+}
+
+.loading, .error, .empty {
+    padding: 24px 20px;
+    text-align: center;
+    color: #718096;
+    font-size: 14px;
+}
+
+.error {
+    color: #e53e3e;
+}
+
+.notificationsList {
+    max-height: 350px;
+    overflow-y: auto;
+}
+
+.footer {
+    padding: 12px 20px;
+    border-top: 1px solid #e2e8f0;
+    background-color: #f8fafc;
+}
+
+.markAllAsRead {
+    width: 100%;
+    padding: 8px 12px;
+    background: transparent;
+    border: 1px solid #c8ddf0;
+    border-radius: 4px;
+    color: #2b7cbf;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.markAllAsRead:hover {
+    background: #2b7cbf;
+    color: white;
 }
