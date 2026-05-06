@@ -147,7 +147,9 @@ class NotificationService(BaseService):
             FullNotificationResponse that was read
         """
         un = await self.user_notification_repository.read_user_notification(
-            self.session, user_notification_id=user_notification_id
+            self.session,
+            user_notification_id=user_notification_id,
+            relationships=["notification"],
         )
 
         if not un:

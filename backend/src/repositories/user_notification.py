@@ -68,6 +68,7 @@ class UserNotificationRepository(
         session: AsyncSession,
         *,
         user_notification_id: int,
+        relationships: Optional[List[str]] = None,
     ) -> Optional[UserNotification]:
         """
         Set UserNotification.is_read to True
@@ -83,7 +84,10 @@ class UserNotificationRepository(
         fields = {"is_read": True, "read_at": datetime.now(timezone.utc)}
 
         return await self.update_fields(
-            session=session, object_id=user_notification_id, fields=fields
+            session=session,
+            object_id=user_notification_id,
+            fields=fields,
+            relationships=relationships,
         )
 
 

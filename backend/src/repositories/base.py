@@ -329,7 +329,12 @@ class BaseRepository(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
 
     @log_database_queries
     async def update_fields(
-        self, session: AsyncSession, *, object_id: Any, fields: Dict[str, Any]
+        self,
+        session: AsyncSession,
+        *,
+        object_id: Any,
+        fields: Dict[str, Any],
+        relationships: Optional[List[str]] = None,
     ) -> Optional[ModelType]:
         """
         Update single field of an object
@@ -343,7 +348,7 @@ class BaseRepository(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
             Updated object or None if not found
         """
         # Get object
-        object = await self.get(session, object_id)
+        object = await self.get(session, object_id, relationships)
         if not object:
             return None
 
