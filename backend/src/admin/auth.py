@@ -1,37 +1,50 @@
+# admin/auth.py
 from typing import Optional
 from starlette.requests import Request
-from starlette.responses import Response, JSONResponse
+from starlette.responses import Response, RedirectResponse
 from sqladmin.authentication import AuthenticationBackend
-
+import jwt
+from core.config import settings
+from core.security import decode_token
 from core.exceptions import AuthError
 
 
 class AdminAuthBackend(AuthenticationBackend):
-    """
-    Authentication backend for SQLAdmin that checks session.
-    Actual JWT authentication is done via FastAPI Depends in admin_router.
-    """
-
     async def login(self, request: Request) -> bool:
-        """
-        Disable login form - admins must have token from main service
-        """
-        return False
+        # Get token
+        token_cookie = request.cookies.get("access_token")
+
+        if not token_cookie:
+            return False
+
+        token = token_cookie.replace("Bearer ", "")
+
+        try:
+            # Verify JWT
+            payload = decode_token(token)
+
+            if payload.get("role") != "admin":
+                return False
+
+            # Save data to session
+            request.session["authenticated"] = True
+            request.session["user_id"] = payload.get("sub")
+            request.session["role"] = payload.get("role")
+
+            return True
+
+        except jwt.InvalidTokenError:
+            return False
+        except Exception:
+            return False
 
     async def logout(self, request: Request) -> bool:
-        """
-        Logout - just clear session
-        """
         request.session.clear()
         return True
 
-    async def authenticate(self, request: Request) -> Optional[Response]:
-        """
-        Check if admin was authenticated via Depends (session flag)
-        """
-        authenticated = request.session.get("authenticated", False)
-        if not authenticated:
-            raise AuthError("Authentication required")
+    async def authenticate(self, request: Request) -> bool:
+        # Check session
+        if request.session.get("authenticated"):
+            return True
 
-        # All checks passed in Depends, just allow access
-        return None
+        return False

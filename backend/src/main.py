@@ -8,6 +8,7 @@ from core.config import settings
 from api.v1.router import router
 from database import database
 from admin import setup_admin
+from admin.router import router as admin_router
 
 
 @asynccontextmanager
@@ -19,6 +20,7 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(title="HMD", lifespan=lifespan)
 app.include_router(router)
+app.include_router(admin_router)
 
 app.add_middleware(
     CORSMiddleware,

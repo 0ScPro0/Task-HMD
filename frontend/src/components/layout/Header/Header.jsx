@@ -1,9 +1,12 @@
 import { useState } from "react"
 import styles from "./Header.module.css"
 import { NotifyPopup } from "../NotifyPopup/NotifyPopup"
+import { useAuthStore } from "../../../stores/authStore"
 
 export function Header(){
     const [notifyOpen, setNotifyOpen] = useState(false)
+    const { isAdmin } = useAuthStore()
+    const isUserAdmin = isAdmin()
 
     const toggleNotify = (e) => {
         e.stopPropagation()
@@ -14,7 +17,6 @@ export function Header(){
         setNotifyOpen(false)
     }
 
-    // Закрытие при клике вне popup
     useState(() => {
         const handleClick = () => closeNotify()
         document.addEventListener('click', handleClick)
@@ -41,6 +43,10 @@ export function Header(){
                 </button>
 
                 <a href="/me" className={styles.header__link}>Личный кабинет</a>
+                {isUserAdmin && (
+                    <a href="/admin" className={styles.header__link}>Админка</a>
+                )}
+                
             </nav>
             <NotifyPopup isOpen={notifyOpen} />
         </header>

@@ -83,8 +83,12 @@ class AuthService:
         )
 
         # Create tokens
-        access_token = create_access_token({"sub": str(user.id)})
-        refresh_token = create_refresh_token({"sub": str(user.id)})
+        access_token = create_access_token(
+            {"sub": str(user.id), "role": str(user.role.value)}
+        )
+        refresh_token = create_refresh_token(
+            {"sub": str(user.id), "role": str(user.role.value)}
+        )
 
         # Calculate expiration times
         access_token_expires_in = settings.security.access_token_expire_minutes
@@ -137,8 +141,12 @@ class AuthService:
             raise AuthError("User is deactivated")
 
         # Create tokens
-        access_token = create_access_token({"sub": str(user.id)})
-        refresh_token = create_refresh_token({"sub": str(user.id)})
+        access_token = create_access_token(
+            {"sub": str(user.id), "role": str(user.role.value)}
+        )
+        refresh_token = create_refresh_token(
+            {"sub": str(user.id), "role": str(user.role.value)}
+        )
 
         # Calculate expiration times
         access_token_expires_in = settings.security.access_token_expire_minutes * 60
@@ -262,7 +270,9 @@ class AuthService:
                 raise AuthError("Refresh token expired")
 
         # Create new access token
-        new_access_token = create_access_token({"sub": str(user.id)})
+        new_access_token = create_access_token(
+            {"sub": str(user.id), "role": str(user.role.value)}
+        )
         access_token_expires_in = settings.security.access_token_expire_minutes * 60
 
         # Return response
