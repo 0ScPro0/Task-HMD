@@ -46,7 +46,7 @@ export function AuthLoader({ children }) {
         };
         
         checkAuth();
-    }, [refreshToken, refreshAccessToken, setUserData]); // Добавили зависимости
+    }, [refreshToken, refreshAccessToken, setUserData]);
 
     if (isChecking) {
         return (

@@ -1,0 +1,377 @@
+/* ── Base Layout ── */
+.me {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    background: #f5f8fb;
+    font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+    color: #333;
+    line-height: 1.5;
+}
+
+.main {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    padding: 28px 24px;
+}
+
+.profileContainer {
+    width: 100%;
+    max-width: 860px;
+}
+
+.profileCard {
+    background: #ffffff;
+    border: 1px solid #d6e4f0;
+    border-radius: 10px;
+    padding: 28px 32px;
+    box-shadow: 0 2px 12px rgba(43, 124, 191, 0.08);
+}
+
+/* ── Profile Header ── */
+.profileHeader {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    margin-bottom: 24px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.profileAvatar {
+    width: 64px;
+    height: 64px;
+    background: #e8f1fa;
+    color: #2b7cbf;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    font-weight: 700;
+    flex-shrink: 0;
+    user-select: none;
+}
+
+.profileHeaderInfo {
+    flex: 1;
+}
+
+.profileName {
+    font-size: 22px;
+    font-weight: 600;
+    color: #2d3748;
+    margin-bottom: 4px;
+}
+
+.profileBadge {
+    display: inline-block;
+    padding: 4px 12px;
+    background: #e8f1fa;
+    color: #2b7cbf;
+    border-radius: 12px;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.btnEdit {
+    padding: 10px 18px;
+    background: transparent;
+    border: 1px solid #c8ddf0;
+    color: #2b7cbf;
+    font-size: 14px;
+    font-weight: 500;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+    text-decoration: none;
+    display: inline-block;
+    text-align: center;
+}
+
+.btnEdit:hover {
+    background: #e8f1fa;
+    border-color: #8fbde3;
+}
+
+/* ── Profile Grid ── */
+.profileGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
+}
+
+.infoGroup {
+    background: #fafcfe;
+    border: 1px solid #e8f1fa;
+    border-radius: 8px;
+    padding: 16px 18px;
+}
+
+.groupTitle {
+    font-size: 13px;
+    color: #718096;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 12px;
+}
+
+.infoRow {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 9px 0;
+    border-bottom: 1px solid #edf2f7;
+}
+
+.infoRow:last-child {
+    border-bottom: none;
+}
+
+.infoLabel {
+    color: #4a5568;
+    font-size: 14px;
+}
+
+.infoValue {
+    color: #2d3748;
+    font-weight: 500;
+    font-size: 14px;
+    text-align: right;
+}
+
+/* ── Edit Mode Inputs ── */
+.editInput {
+    width: 100%;
+    max-width: 200px;
+    padding: 6px 10px;
+    font-size: 14px;
+    border: 1px solid #c8ddf0;
+    border-radius: 4px;
+    background: #ffffff;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    outline: none;
+    font-family: inherit;
+    text-align: right;
+}
+
+.editInput:focus {
+    border-color: #2b7cbf;
+    box-shadow: 0 0 0 3px rgba(43, 124, 191, 0.12);
+}
+
+/* ── Edit Action Buttons ── */
+.editActions {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    margin-top: 28px;
+    padding-top: 20px;
+    border-top: 1px solid #e2e8f0;
+}
+
+.btnCancel, .btnSave {
+    padding: 10px 24px;
+    font-size: 14px;
+    font-weight: 500;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: none;
+    font-family: inherit;
+}
+
+.btnCancel {
+    background: transparent;
+    border: 1px solid #c8ddf0;
+    color: #4a5568;
+}
+
+.btnCancel:hover {
+    background: #f7fafc;
+    border-color: #a0aec0;
+}
+
+.btnSave {
+    background: #2b7cbf;
+    color: white;
+    border: 1px solid #2b7cbf;
+}
+
+.btnSave:hover {
+    background: #1a5a94;
+    border-color: #1a5a94;
+}
+
+.btnSave:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* ── Status Messages ── */
+.errorMessage {
+    width: 100%;
+    padding: 10px 14px;
+    background: #fed7d7;
+    border: 1px solid #fc8181;
+    color: #c53030;
+    border-radius: 6px;
+    font-size: 14px;
+    margin-bottom: 12px;
+    text-align: center;
+}
+
+.successMessage {
+    width: 100%;
+    padding: 10px 14px;
+    background: #c6f6d5;
+    border: 1px solid #68d391;
+    color: #22543d;
+    border-radius: 6px;
+    font-size: 14px;
+    margin-bottom: 12px;
+    text-align: center;
+}
+
+/* ── Loading Spinner ── */
+.loadingSpinner {
+    display: inline-block;
+    width: 14px;
+    height: 14px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    border-top-color: white;
+    animation: spin 0.8s linear infinite;
+    margin-right: 8px;
+    vertical-align: middle;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* ── Data Fetching Styles ── */
+.loadingOverlay {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 30px 20px;
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 8px;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.loadingOverlay .loadingSpinner {
+    width: 32px;
+    height: 32px;
+    border-width: 3px;
+    border-top-color: #2b7cbf;
+    margin-bottom: 12px;
+}
+
+.loadingOverlay p {
+    color: #4a5568;
+    font-size: 15px;
+    margin: 0;
+}
+
+.fetchErrorMessage {
+    width: 100%;
+    padding: 14px 16px;
+    background: #fffaf0;
+    border: 1px solid #f6ad55;
+    color: #c05621;
+    border-radius: 6px;
+    font-size: 14px;
+    margin-bottom: 20px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+
+.retryButton {
+    padding: 6px 16px;
+    background: #ed8936;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.retryButton:hover {
+    background: #dd6b20;
+}
+
+/* ── Logout Button ── */
+.btnLogout {
+    display: block;
+    width: 100%;
+    max-width: 220px;
+    margin: 28px auto 0;
+    padding: 11px;
+    background: transparent;
+    border: 1px solid #e2e8f0;
+    color: #e53e3e;
+    font-size: 14px;
+    font-weight: 500;
+    border-radius: 6px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: none;
+    font-family: inherit;
+}
+
+.btnLogout:hover {
+    background: #fff5f5;
+    border-color: #feb2b2;
+}
+
+.btnLogout:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* ── Responsive ── */
+@media (max-width: 600px) {
+    .profileHeader {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+    }
+
+    .btnEdit {
+        width: 100%;
+        text-align: center;
+        margin-top: 8px;
+    }
+
+    .profileGrid {
+        grid-template-columns: 1fr;
+    }
+
+    .editActions {
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .btnCancel, .btnSave {
+        width: 100%;
+    }
+
+    .editInput {
+        max-width: 100%;
+    }
+}

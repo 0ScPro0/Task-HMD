@@ -30,9 +30,9 @@ class UserUpdate(BaseModel):
     email: Optional[EmailStr] = Field(None, max_length=255)
     name: Optional[str] = Field(None, min_length=3, max_length=100)
     surname: Optional[str] = Field(None, min_length=3, max_length=100)
-    patronymic: Optional[str] = Field(None, min_length=3, max_length=100)
-    address: Optional[str] = Field(None, min_length=3, max_length=100)
-    apartment: Optional[str] = Field(None, min_length=1, max_length=20)
+    patronymic: Optional[str] = Field(None, max_length=100)
+    address: Optional[str] = Field(None, max_length=100)
+    apartment: Optional[str] = Field(None, max_length=20)
     phone: Optional[str] = Field(None, min_length=9, max_length=15)
     role: Optional[UserRole] = Field(None)
 
@@ -47,8 +47,18 @@ class UserUpdatePassword(BaseModel):
     new_password: str = Field(..., min_length=8, max_length=100)
 
 
-class UserResponse(UserBase):
+class UserResponse(BaseModel):
     id: int
+
+    email: Optional[EmailStr] = Field(None, max_length=255)
+    name: Optional[str] = Field(None, min_length=3, max_length=100)
+    surname: Optional[str] = Field(None, min_length=3, max_length=100)
+    patronymic: Optional[str] = Field(None, max_length=100)
+    address: Optional[str] = Field(None, max_length=100)
+    apartment: Optional[str] = Field(None, max_length=20)
+    phone: Optional[str] = Field(None, min_length=9, max_length=15)
+    role: Optional[UserRole] = Field(None)
+
     refresh_token: Optional[str] = None
     refresh_token_expires_at: Optional[datetime] = None
     created_at: datetime
