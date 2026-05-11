@@ -29,6 +29,8 @@ export function Header(){
 
             <nav className={styles.header__right}>
                 <a href="/news" className={styles.header__link}>Новости</a>
+                <a href="/request" className={styles.header__link}>Заявки</a>
+                <a href="/me" className={styles.header__link}>Личный кабинет</a>
 
                 <button className={styles.header__notify} onClick={toggleNotify} title="Уведомления">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"
@@ -41,8 +43,7 @@ export function Header(){
                             0v-1m6 0H9" />
                     </svg>
                 </button>
-
-                <a href="/me" className={styles.header__link}>Личный кабинет</a>
+                
                 {isUserAdmin && (
                     <a href="/admin" className={styles.header__link}>Админка</a>
                 )}
