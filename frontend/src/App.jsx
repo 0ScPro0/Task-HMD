@@ -7,6 +7,7 @@ import { Login } from './pages/Login/Login'
 import { Register } from './pages/Register/Register'
 import { Me } from './pages/Me/Me'
 import { Request } from './pages/Request/Request'
+import { RequestNew } from './pages/RequestNew/RequestNew'
 import { AdminRedirect } from './pages/AdminRedirect/AdminRedirect'
 
 import { AuthLoader } from './components/auth/AuthLoader/AuthLoader'
@@ -37,6 +38,11 @@ function AppContent() {
                 <Route path="/request" element={
                     <ProtectedRoute>
                         <Request/>
+                    </ProtectedRoute>
+                } />
+                <Route path="/request" element={
+                    <ProtectedRoute>
+                        <RequestNew/>
                     </ProtectedRoute>
                 } />
             </Routes>
