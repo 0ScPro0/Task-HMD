@@ -40,7 +40,7 @@ function AppContent() {
                         <Request/>
                     </ProtectedRoute>
                 } />
-                <Route path="/request" element={
+                <Route path="/request/new" element={
                     <ProtectedRoute>
                         <RequestNew/>
                     </ProtectedRoute>
