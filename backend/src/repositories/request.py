@@ -88,10 +88,11 @@ class RequestRepository(BaseRepository[Request, RequestCreate, RequestUpdate]):
         Returns:
             List of available requests or empty list
         """
+
         query = (
             select(Request)
-            .where(Request.type == role)
-            .where(Request.executor_id.is_(None))
+            .where(Request.type == RequestType(role.value))
+            .where(Request.executor_id.is_(0))
             .order_by(Request.created_at.desc())
             .limit(limit)
         )

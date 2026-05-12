@@ -14,6 +14,7 @@ from core.exceptions import CreateError, PermissionDeniedError
 from database import User, Request, UserRole
 from schemas.request import RequestCreate, RequestBase, RequestResponse, RequestUpdate
 from schemas.notification import NotificationCreate
+from schemas.user import UserPublicResponse
 from utils.logger import log
 
 router = APIRouter(prefix="/requests", tags=["requests"])
@@ -79,7 +80,22 @@ async def create_request(
     request_service: RequestService = Depends(get_request_service),
 ):
     """Create request"""
-    return await request_service.create_request(request=request)
+    created_request = await request_service.create_request(request=request)
+
+    return RequestResponse(
+        type=created_request.type,
+        title=created_request.title,
+        description=created_request.description,
+        status=created_request.status,
+        admin_comment=created_request.admin_comment,
+        id=created_request.id,
+        owner_id=created_request.owner_id,
+        executor_id=None,
+        owner=UserPublicResponse.model_validate(current_user),
+        executor=None,
+        created_at=created_request.created_at,
+        updated_at=created_request.updated_at,
+    )
 
 
 @router.delete("/{request_id}", response_model=RequestResponse)
