@@ -55,6 +55,13 @@ class AuthService:
         if not phone:
             raise AuthError(f"Incorrect phone number: {request.phone}")
 
+        if request.role not in [
+            UserRole.RESIDENT,
+            UserRole.RESIDENT.value,
+            "resident",
+        ]:
+            raise AuthError(f"Can not register user with role {request.role}")
+
         # Check if user with the same phone or email already exists
         if await self.user_repository.get_user_by_phone_or_email(
             self.session, phone=phone, email=request.email

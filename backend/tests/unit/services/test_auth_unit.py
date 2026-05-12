@@ -504,7 +504,7 @@ async def test_refresh_token_valid_refresh_token(
         refresh_token=refresh_token,
     )
 
-    await asyncio.sleep(0.65)  # Duration
+    await asyncio.sleep(1)  # Duration
 
     # Call refresh_token method
     refresh_response = await auth_service.refresh_token(refresh_request)

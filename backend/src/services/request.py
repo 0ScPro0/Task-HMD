@@ -56,7 +56,7 @@ class RequestService(
         self,
         user: User,
         limit: Optional[int] = 100,
-    ) -> List[RequestResponse]:
+    ) -> Optional[List[RequestResponse]]:
         """
         Get requests by user
 
@@ -71,7 +71,7 @@ class RequestService(
             self.session, owner_id=user.id, limit=limit
         )
         if not requests:
-            raise NotFoundError("User has not any requests")
+            return []
         return [RequestResponse.model_validate(request) for request in requests]
 
     @log

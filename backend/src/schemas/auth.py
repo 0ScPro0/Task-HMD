@@ -1,7 +1,8 @@
 from datetime import datetime
-from typing import Optional
+from typing import Optional, Union
 from pydantic import BaseModel, EmailStr, Field
 
+from database import UserRole
 from schemas.user import UserBase, UserCreate, UserResponse
 
 
@@ -36,6 +37,7 @@ class RegisterRequest(BaseModel):
     apartment: Optional[str] = Field(None, min_length=1, max_length=20)
     phone: str = Field(..., min_length=9, max_length=15)
     password: str = Field(..., min_length=8, max_length=72)
+    role: Union[UserRole, str] = Field(UserRole.RESIDENT, min_length=3, max_length=100)
 
 
 class LoginResponse(BaseModel):

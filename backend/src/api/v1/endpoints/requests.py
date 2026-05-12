@@ -19,17 +19,6 @@ from utils.logger import log
 router = APIRouter(prefix="/requests", tags=["requests"])
 
 
-@router.post("/create", response_model=RequestResponse)
-@log
-async def create_request(
-    request: RequestCreate,
-    current_user: User = Depends(get_current_user),
-    request_service: RequestService = Depends(get_request_service),
-):
-    """Create request"""
-    return await request_service.create_request(request=request)
-
-
 @router.get("/", response_model=List[RequestResponse])
 @log
 async def get_requests(
@@ -80,6 +69,17 @@ async def get_request_by_id(
 ):
     """Request details"""
     return await request_service.get_request(request_id=request_id, user=current_user)
+
+
+@router.post("/create", response_model=RequestResponse)
+@log
+async def create_request(
+    request: RequestCreate,
+    current_user: User = Depends(get_current_user),
+    request_service: RequestService = Depends(get_request_service),
+):
+    """Create request"""
+    return await request_service.create_request(request=request)
 
 
 @router.delete("/{request_id}", response_model=RequestResponse)

@@ -8,7 +8,6 @@ from src.database import Request, RequestStatus, RequestType, User, UserRole
 from schemas.request import RequestResponse  # type: ignore
 from core.exceptions import NotFoundError, PermissionDeniedError  # type: ignore
 
-
 # ============================================================
 # TESTS: get_requests_by_user
 # ============================================================
@@ -48,6 +47,8 @@ async def test_get_requests_by_user_with_5_requests(
 
     # Call service method
     result = await request_service.get_requests_by_user(user=user, limit=100)
+    if not result:
+        raise NotFoundError
 
     # Assertions
     assert len(result) == 5
@@ -68,7 +69,7 @@ async def test_get_requests_by_user_no_requests(
 ):
     """
     Пользователь без заявок - у пользователя нет ни одной заявки в БД
-    Ожидать NotFoundError с сообщением "User has not any requests"
+    Ожидать пустой список"
     """
     # Create a user
     user_data = user_create_schema_factory(
@@ -82,8 +83,7 @@ async def test_get_requests_by_user_no_requests(
     user = await user_service.create(user_data)
 
     # Expect NotFoundError
-    with pytest.raises(NotFoundError):
-        await request_service.get_requests_by_user(user=user, limit=100)
+    assert await request_service.get_requests_by_user(user=user, limit=100) == []
 
 
 # ============================================================
@@ -761,6 +761,8 @@ async def test_get_requests_by_user_huge_limit(
 
     # Call service method with huge limit
     result = await request_service.get_requests_by_user(user=user, limit=1_000_000)
+    if not result:
+        raise NotFoundError
 
     # Should return all 100 requests
     assert len(result) == 100
