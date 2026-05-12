@@ -45,7 +45,7 @@ export function Header(){
                 </button>
                 
                 {isUserAdmin && (
-                    <a href="/admin" className={styles.header__link}>Админка</a>
+                    <a href="/admin" target="_blank" className={styles.header__link}>Админка</a>
                 )}
                 
             </nav>
