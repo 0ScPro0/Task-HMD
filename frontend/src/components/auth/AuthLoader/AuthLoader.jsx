@@ -2,6 +2,7 @@
 import { useEffect, useState, useRef } from 'react';
 import { useAuthStore } from '../../../stores/authStore';
 import { authService } from '../../../services/api/auth';
+import { userService } from '../../../services/api/users';
 
 export function AuthLoader({ children }) {
     const [isChecking, setIsChecking] = useState(true);
@@ -22,7 +23,7 @@ export function AuthLoader({ children }) {
                 if (success) {
                     // После успешного обновления токена, загружаем данные пользователя
                     try {
-                        const userData = await authService.getCurrentUser();
+                        const userData = await userService.getCurrentUser();
                         setUserData(userData);
                         console.log('Пользователь загружен:', userData);
                     } catch (error) {
