@@ -117,7 +117,7 @@ async def executor_accept_request(
     notification = await notification_service.create_notification(
         NotificationCreate(
             title="Отклик на заявку: " + updated_request.title,
-            body=updated_request.description,
+            body=f"Исполнитель {current_user.name} {current_user.surname} откликнулся на заявку.\nТелефон исполнителя: {current_user.phone}",
             request_id=updated_request.id,
             news_id=None,
         )
@@ -146,8 +146,8 @@ async def update_request_status(
     # Create notification
     notification = await notification_service.create_notification(
         NotificationCreate(
-            title="Изменение в заявке: " + updated_request.title,
-            body=updated_request.description,
+            title=f"Изменение статуса заявки: {updated_request.title}",
+            body=f"Статус заявки изменен на {status}",
             request_id=updated_request.id,
             news_id=None,
         )
