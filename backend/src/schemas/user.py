@@ -65,3 +65,19 @@ class UserResponse(BaseModel):
     updated_at: datetime
 
     model_config = ConfigDict(from_attributes=True)
+
+
+class UserPublicResponse(BaseModel):
+    """Minimal user information for public responses (e.g., in requests)"""
+
+    id: int
+    email: Optional[EmailStr] = Field(None, max_length=255)
+    name: str = Field(..., min_length=3, max_length=100)
+    surname: str = Field(..., min_length=3, max_length=100)
+    patronymic: Optional[str] = Field(None, max_length=100)
+    address: Optional[str] = Field(None, max_length=100)
+    apartment: Optional[str] = Field(None, max_length=20)
+    phone: str = Field(..., min_length=9, max_length=15)
+    role: UserRole = Field(UserRole.RESIDENT)
+
+    model_config = ConfigDict(from_attributes=True)

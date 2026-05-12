@@ -3,6 +3,7 @@ from pydantic import BaseModel, ConfigDict, Field
 from datetime import datetime
 
 from database import RequestStatus, RequestType
+from schemas.user import UserPublicResponse
 
 
 class RequestBase(BaseModel):
@@ -26,6 +27,8 @@ class RequestResponse(RequestBase):
     id: int
     owner_id: int
     executor_id: Optional[int]
+    owner: UserPublicResponse
+    executor: Optional[UserPublicResponse]
     created_at: datetime
     updated_at: datetime
 

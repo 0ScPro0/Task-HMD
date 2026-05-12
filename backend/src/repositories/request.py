@@ -2,6 +2,7 @@ from typing import Dict, List, Optional, Any, Union
 from pydantic import BaseModel
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
+from sqlalchemy.orm import selectinload
 from datetime import datetime
 
 from repositories.base import BaseRepository
@@ -35,7 +36,12 @@ class RequestRepository(BaseRepository[Request, RequestCreate, RequestUpdate]):
         return request
 
     async def get_requests_by_owner(
-        self, session: AsyncSession, *, owner_id: int, limit: Optional[int] = 100
+        self,
+        session: AsyncSession,
+        *,
+        owner_id: int,
+        limit: Optional[int] = 100,
+        relationships: Optional[List[str]] = None,
     ) -> Optional[List[Request]]:
         """
         Get Requests list by owner id
@@ -44,12 +50,17 @@ class RequestRepository(BaseRepository[Request, RequestCreate, RequestUpdate]):
             session: Database session
             user_id: Specific owner id
             limit: Limit of entry
+            relationships: List of relationship names to load
 
         Returns:
             List of requests or None if not found
         """
         requests = await self.get_by_field_many(
-            session, field_name="owner_id", field_value=owner_id, limit=limit
+            session,
+            field_name="owner_id",
+            field_value=owner_id,
+            limit=limit,
+            relationships=relationships,
         )
         return requests
 
@@ -61,6 +72,7 @@ class RequestRepository(BaseRepository[Request, RequestCreate, RequestUpdate]):
         role: UserRole,
         limit: Optional[int] = 100,
         status: Optional[RequestStatus] = RequestStatus.NEW,
+        relationships: Optional[List[str]] = None,
     ) -> Optional[List[Request]]:
         """
         Get available Requests for executor by role.
@@ -71,6 +83,7 @@ class RequestRepository(BaseRepository[Request, RequestCreate, RequestUpdate]):
             role: User role (PLUMBER, ELECTRICIAN)
             limit: Limit of entries
             status: Request status filter (default: NEW)
+            relationships: List of relationship names to load
 
         Returns:
             List of available requests or empty list
@@ -85,6 +98,11 @@ class RequestRepository(BaseRepository[Request, RequestCreate, RequestUpdate]):
 
         if status is not None:
             query = query.where(Request.status == status)
+
+        # Loading related objects
+        if relationships:
+            for rel in relationships:
+                query = query.options(selectinload(getattr(Request, rel)))
 
         result = await session.execute(query)
         return list(result.scalars().all())

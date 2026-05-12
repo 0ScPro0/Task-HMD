@@ -52,6 +52,7 @@ class BaseRepository(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
         skip: int = 0,
         limit: int = 100,
         order_by: Optional[Any],
+        relationships: Optional[List[str]] = None,
     ) -> List[ModelType]:
         """
         Get object list with pagination
@@ -61,6 +62,7 @@ class BaseRepository(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
             skip: Skip number of objects
             limit: Limit number of objects
             order_by: Order by field
+            relationships: List of relationship names to load
 
         Returns:
             List of objects
@@ -69,6 +71,11 @@ class BaseRepository(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
 
         if order_by is not None:
             query = query.order_by(order_by)
+
+        # Loading related objects
+        if relationships:
+            for rel in relationships:
+                query = query.options(selectinload(getattr(self.model, rel)))
 
         query = query.offset(skip).limit(limit)
         result = await session.execute(query)

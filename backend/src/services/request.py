@@ -43,7 +43,11 @@ class RequestService(
             raise PermissionDeniedError("Not enough permissions")
 
         requests = await self.repository.get_many(
-            self.session, skip=skip, limit=limit, order_by=order_by
+            self.session,
+            skip=skip,
+            limit=limit,
+            order_by=order_by,
+            relationships=["owner", "executor"],
         )
 
         if not requests:
@@ -68,7 +72,10 @@ class RequestService(
             List of RequestResponse
         """
         requests = await self.repository.get_requests_by_owner(
-            self.session, owner_id=user.id, limit=limit
+            self.session,
+            owner_id=user.id,
+            limit=limit,
+            relationships=["owner", "executor"],
         )
         if not requests:
             return []
@@ -95,7 +102,11 @@ class RequestService(
             raise PermissionDeniedError("Not enough permissions")
 
         requests = await self.repository.get_requests_by_role(
-            self.session, role=executor.role, limit=limit, status=RequestStatus.NEW
+            self.session,
+            role=executor.role,
+            limit=limit,
+            status=RequestStatus.NEW,
+            relationships=["owner", "executor"],
         )
         if not requests:
             return []
@@ -107,7 +118,9 @@ class RequestService(
         user: User,
         request_id: int,
     ) -> RequestResponse:
-        request = await self.repository.get(self.session, id=request_id)
+        request = await self.repository.get(
+            self.session, id=request_id, relationships=["owner", "executor"]
+        )
         if not request:
             raise NotFoundError("Request not found")
 
@@ -184,10 +197,17 @@ class RequestService(
         updated_request = await self.repository.update(
             self.session, update_object_id=request_id, object_in=data
         )
-        if not current_request:
+        if not updated_request:
             raise NotFoundError("Request not found")
 
-        return RequestResponse.model_validate(updated_request)
+        # Fetch the updated request with relationships
+        request_with_relations = await self.repository.get(
+            self.session, id=request_id, relationships=["owner", "executor"]
+        )
+        if not request_with_relations:
+            raise NotFoundError("Request not found after update")
+
+        return RequestResponse.model_validate(request_with_relations)
 
     @log
     async def executor_accept_request(
@@ -228,7 +248,18 @@ class RequestService(
             )
         else:
             raise PermissionDeniedError("Request is already accepted")
-        return RequestResponse.model_validate(updated_request)
+
+        if not updated_request:
+            raise NotFoundError("Request not found after update")
+
+        # Fetch the updated request with relationships
+        request_with_relations = await self.repository.get(
+            self.session, id=request_id, relationships=["owner", "executor"]
+        )
+        if not request_with_relations:
+            raise NotFoundError("Request not found after update")
+
+        return RequestResponse.model_validate(request_with_relations)
 
     @log
     async def update_request_status(
@@ -244,8 +275,10 @@ class RequestService(
         Returns:
             RequestResponse
         """
-        # Get request
-        request = await self.repository.get(self.session, id=request_id)
+        # Get request with relationships
+        request = await self.repository.get(
+            self.session, id=request_id, relationships=["owner", "executor"]
+        )
         if not request:
             raise NotFoundError("Request not found")
 
@@ -255,10 +288,20 @@ class RequestService(
                 "Only admin or request executer can change request status"
             )
 
-        request = await self.repository.update_request_status(
+        updated_request = await self.repository.update_request_status(
             self.session, request_id=request_id, status=status
         )
-        return RequestResponse.model_validate(request)
+        if not updated_request:
+            raise NotFoundError("Request not found after update")
+
+        # Fetch the updated request with relationships
+        request_with_relations = await self.repository.get(
+            self.session, id=request_id, relationships=["owner", "executor"]
+        )
+        if not request_with_relations:
+            raise NotFoundError("Request not found after update")
+
+        return RequestResponse.model_validate(request_with_relations)
 
     @log
     async def delete_request(self, user: User, request_id: int) -> bool:
