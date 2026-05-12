@@ -142,6 +142,10 @@ export function Me() {
             // Call user service stub
             var validatedFormData = formData
             delete validatedFormData.create_at
+            if (validatedFormData.email === "") {
+                validatedFormData.email = null
+            }
+                
             const updatedUser = await userService.updateProfile(validatedFormData)
             
             // Update auth store with new user data
