@@ -1,0 +1,217 @@
+/* ── Request Card ── */
+.requestCard {
+    background: #ffffff;
+    border: 1px solid #d6e4f0;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 16px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+}
+
+.requestCardTop {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.requestCardTitle {
+    font-size: 16px;
+    font-weight: 600;
+    color: #2d3748;
+}
+
+.requestCardMeta {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.badge {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.badgeType {
+    background: #edf2f7;
+    color: #4a5568;
+}
+
+.badgeTypePlumber {
+    background: #e6f6fd;
+    color: #2b7cbf;
+}
+
+.badgeTypeElectrician {
+    background: #f0fff4;
+    color: #38a169;
+}
+
+.badgeStatus {
+    background: #faf089;
+    color: #744210;
+}
+
+.badgeStatusNew {
+    background: #e6f6fd;
+    color: #2b7cbf;
+}
+
+.badgeStatusInProgress {
+    background: #fef3c7;
+    color: #92400e;
+}
+
+.badgeStatusCompleted {
+    background: #d1fae5;
+    color: #065f46;
+}
+
+.requestDate {
+    font-size: 13px;
+    color: #93a4b5;
+}
+
+.requestCardDesc {
+    background: #fafcfe;
+    padding: 10px 12px;
+    border-radius: 6px;
+    font-size: 14px;
+    color: #5a6b7d;
+    line-height: 1.5;
+    margin: 10px 0;
+    border-left: 3px solid #c8ddf0;
+}
+
+.requestCardGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 12px;
+    margin-top: 14px;
+    padding-top: 14px;
+    border-top: 1px solid #e8f1fa;
+}
+
+.field {
+    font-size: 13px;
+}
+
+.fieldLabel {
+    color: #718096;
+    display: block;
+    margin-bottom: 3px;
+}
+
+.fieldValue {
+    color: #2d3748;
+    font-weight: 500;
+}
+
+.fieldValueMuted {
+    color: #93a4b5;
+    font-style: italic;
+}
+
+/* Action buttons */
+.actionButtons {
+    display: flex;
+    gap: 10px;
+    margin: 15px 0;
+    flex-wrap: wrap;
+}
+
+.btnAccept,
+.btnComplete,
+.btnDelete {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btnAccept {
+    background: #38a169;
+    color: white;
+}
+
+.btnAccept:hover:not(:disabled) {
+    background: #2f855a;
+}
+
+.btnAccept:disabled {
+    background: #9ae6b4;
+    cursor: not-allowed;
+}
+
+.btnComplete {
+    background: #3182ce;
+    color: white;
+}
+
+.btnComplete:hover:not(:disabled) {
+    background: #2b6cb0;
+}
+
+.btnComplete:disabled {
+    background: #90cdf4;
+    cursor: not-allowed;
+}
+
+.btnDelete {
+    background: #e53e3e;
+    color: white;
+}
+
+.btnDelete:hover:not(:disabled) {
+    background: #c53030;
+}
+
+.btnDelete:disabled {
+    background: #fc8181;
+    cursor: not-allowed;
+}
+
+/* Action error message */
+.actionError {
+    background: #fed7d7;
+    color: #9b2c2c;
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-size: 13px;
+    margin: 10px 0;
+    border-left: 3px solid #f56565;
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+    .requestCardTop {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .requestCardMeta {
+        flex-wrap: wrap;
+    }
+    
+    .requestCardGrid {
+        grid-template-columns: 1fr;
+    }
+    
+    .actionButtons {
+        flex-direction: column;
+    }
+    
+    .btnAccept,
+    .btnComplete,
+    .btnDelete {
+        width: 100%;
+    }
+}

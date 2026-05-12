@@ -1,0 +1,144 @@
+/* ── Base Layout ── */
+.request {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    background: #f5f8fb;
+    font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+    color: #333;
+    line-height: 1.5;
+}
+
+.main {
+    flex: 1;
+    max-width: 960px;
+    width: 100%;
+    margin: 0 auto;
+    padding: 24px;
+}
+
+/* ── Page Header ── */
+.pageHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+    gap: 16px;
+}
+
+.pageTitle {
+    font-size: 24px;
+    font-weight: 700;
+    color: #2b5e8a;
+}
+
+.btnNew {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 10px 18px;
+    background: #2b7cbf;
+    color: #fff;
+    font-size: 14px;
+    font-weight: 600;
+    border-radius: 6px;
+    transition: background 0.2s;
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+    font-family: inherit;
+}
+
+.btnNew:hover {
+    background: #1a5a94;
+}
+
+/* ── Sections ── */
+.requestsSection {
+    margin-bottom: 32px;
+}
+
+.sectionTitle {
+    font-size: 18px;
+    font-weight: 600;
+    color: #4a5568;
+    margin: 28px 0 16px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #e2e8f0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.sectionHint {
+    font-size: 13px;
+    color: #93a4b5;
+    font-weight: 400;
+}
+
+/* ── Loading & Error States ── */
+.loadingOverlay {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 20px;
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 8px;
+    margin: 20px 0;
+    text-align: center;
+}
+
+.loadingSpinner {
+    display: inline-block;
+    width: 32px;
+    height: 32px;
+    border: 3px solid rgba(43, 124, 191, 0.3);
+    border-radius: 50%;
+    border-top-color: #2b7cbf;
+    animation: spin 0.8s linear infinite;
+    margin-bottom: 12px;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.errorMessage {
+    width: 100%;
+    padding: 14px 16px;
+    background: #fed7d7;
+    border: 1px solid #fc8181;
+    color: #c53030;
+    border-radius: 6px;
+    font-size: 14px;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+/* ── Empty State ── */
+.emptyState {
+    text-align: center;
+    padding: 40px 20px;
+    background: #ffffff;
+    border: 1px dashed #c8ddf0;
+    border-radius: 8px;
+    color: #718096;
+    font-size: 15px;
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+    .pageHeader {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .btnNew {
+        width: 100%;
+        justify-content: center;
+    }
+}
