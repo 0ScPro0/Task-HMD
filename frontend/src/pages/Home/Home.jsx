@@ -9,7 +9,7 @@ import { useNavigate } from "react-router-dom"
 export function Home() {
     const navigate = useNavigate();
     const handleRequestClick = () => {
-        navigate('/request')
+        navigate('/request/new')
     }
 
     return (
