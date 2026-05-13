@@ -1,0 +1,296 @@
+/* ── Base & Reset ── */
+.request_new {
+    font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+    color: #333;
+    background: #f5f8fb;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    line-height: 1.5;
+}
+
+/* ── Header ── */
+.header {
+    background: #ffffff;
+    border-bottom: 2px solid #c8ddf0;
+    padding: 0 32px;
+    height: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+}
+
+.header__logo {
+    font-size: 26px;
+    font-weight: 700;
+    color: #2b7cbf;
+    letter-spacing: 2px;
+    transition: color 0.2s;
+    user-select: none;
+    text-decoration: none;
+}
+
+.header__logo:hover {
+    color: #1a5a94;
+}
+
+.header__right {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.header__link {
+    font-size: 15px;
+    color: #4a5568;
+    transition: color 0.2s;
+    padding: 6px 4px;
+    text-decoration: none;
+}
+
+.header__link:hover {
+    color: #2b7cbf;
+}
+
+.header__notify {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    transition: background 0.2s;
+    color: #4a5568;
+}
+
+.header__notify:hover {
+    background: #e8f1fa;
+    color: #2b7cbf;
+}
+
+.header__notify svg {
+    width: 22px;
+    height: 22px;
+}
+
+.notify_popup {
+    display: none;
+    position: absolute;
+    top: 60px;
+    right: 32px;
+    background: #fff;
+    border: 1px solid #c8ddf0;
+    border-radius: 8px;
+    padding: 20px 28px;
+    font-size: 14px;
+    color: #718096;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+    z-index: 200;
+    min-width: 220px;
+}
+
+.notify_popup.active {
+    display: block;
+}
+
+/* ── Main & Form Card ── */
+.main {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+}
+
+.form_card {
+    background: #ffffff;
+    border: 1px solid #d6e4f0;
+    border-radius: 10px;
+    padding: 32px 28px;
+    width: 100%;
+    max-width: 600px;
+    box-shadow: 0 2px 12px rgba(43, 124, 191, 0.08);
+}
+
+.form_title {
+    font-size: 22px;
+    font-weight: 600;
+    color: #2b5e8a;
+    text-align: center;
+    margin-bottom: 24px;
+}
+
+.form_group {
+    margin-bottom: 16px;
+}
+
+.form_label {
+    display: block;
+    font-size: 14px;
+    color: #4a5568;
+    margin-bottom: 6px;
+    font-weight: 500;
+}
+
+.form_input,
+.form_textarea,
+.form_select {
+    width: 100%;
+    padding: 10px 14px;
+    font-size: 14px;
+    border: 1px solid #c8ddf0;
+    border-radius: 6px;
+    background: #fafcfe;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    outline: none;
+    font-family: inherit;
+}
+
+.form_textarea {
+    resize: vertical;
+    min-height: 100px;
+}
+
+.form_select {
+    cursor: pointer;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%234a5568' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    padding-right: 32px;
+}
+
+.form_input:focus,
+.form_textarea:focus,
+.form_select:focus {
+    border-color: #2b7cbf;
+    box-shadow: 0 0 0 3px rgba(43, 124, 191, 0.12);
+}
+
+.form_actions {
+    display: flex;
+    gap: 12px;
+    margin-top: 24px;
+}
+
+.btn_submit {
+    flex: 1;
+    padding: 12px;
+    background: #2b7cbf;
+    color: #fff;
+    font-size: 15px;
+    font-weight: 600;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.btn_submit:hover {
+    background: #1a5a94;
+}
+
+.btn_back {
+    flex: 0;
+    padding: 12px 18px;
+    background: transparent;
+    border: 1px solid #c8ddf0;
+    color: #4a5568;
+    font-size: 14px;
+    font-weight: 500;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-decoration: none;
+    text-align: center;
+}
+
+.btn_back:hover {
+    background: #e8f1fa;
+    border-color: #8fbde3;
+}
+
+/* ── Loading & Error States ── */
+.loading_overlay {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 20px;
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 8px;
+    margin: 20px 0;
+    text-align: center;
+}
+
+.loading_spinner {
+    display: inline-block;
+    width: 32px;
+    height: 32px;
+    border: 3px solid rgba(43, 124, 191, 0.3);
+    border-radius: 50%;
+    border-top-color: #2b7cbf;
+    animation: spin 0.8s linear infinite;
+    margin-bottom: 16px;
+}
+
+.error_message {
+    background: #fed7d7;
+    color: #9b2c2c;
+    padding: 12px 16px;
+    border-radius: 6px;
+    margin-bottom: 24px;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.success_message {
+    background: #c6f6d5;
+    color: #22543d;
+    padding: 12px 16px;
+    border-radius: 6px;
+    margin-bottom: 24px;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.field_error {
+    color: #e53e3e;
+    font-size: 12px;
+    margin-top: 4px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+/* ── Animation ── */
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* ── Responsive ── */
+@media (max-width: 600px) {
+    .header {
+        padding: 0 16px;
+    }
+
+    .form_card {
+        padding: 24px 20px;
+    }
+
+    .form_actions {
+        flex-direction: column-reverse;
+    }
+}
