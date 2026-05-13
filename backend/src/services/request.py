@@ -210,9 +210,7 @@ class RequestService(
         return RequestResponse.model_validate(request_with_relations)
 
     @log
-    async def executor_accept_request(
-        self, request_id: int, executor: User
-    ) -> RequestResponse:
+    async def executor_accept_request(self, request_id: int, executor: User) -> Request:
         """
         Update request executor
 
@@ -259,7 +257,7 @@ class RequestService(
         if not request_with_relations:
             raise NotFoundError("Request not found after update")
 
-        return RequestResponse.model_validate(request_with_relations)
+        return request_with_relations
 
     @log
     async def update_request_status(

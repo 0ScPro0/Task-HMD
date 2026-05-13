@@ -26,7 +26,7 @@ class RequestUpdate(RequestBase):
 class RequestResponse(RequestBase):
     id: int
     owner_id: int
-    executor_id: Optional[int]
+    executor_id: int = Field(0)
     owner: UserPublicResponse
     executor: Optional[UserPublicResponse]
     created_at: datetime

@@ -90,7 +90,7 @@ async def create_request(
         admin_comment=created_request.admin_comment,
         id=created_request.id,
         owner_id=created_request.owner_id,
-        executor_id=None,
+        executor_id=created_request.executor_id,
         owner=UserPublicResponse.model_validate(current_user),
         executor=None,
         created_at=created_request.created_at,
@@ -141,6 +141,21 @@ async def executor_accept_request(
 
     # Send notifications
     await notification_service.send_notifications(notification=notification)
+
+    return RequestResponse(
+        type=updated_request.type,
+        title=updated_request.title,
+        description=updated_request.description,
+        status=updated_request.status,
+        admin_comment=updated_request.admin_comment,
+        id=updated_request.id,
+        owner_id=updated_request.owner_id,
+        executor_id=updated_request.executor_id,
+        owner=UserPublicResponse.model_validate(current_user),
+        executor=None,
+        created_at=updated_request.created_at,
+        updated_at=updated_request.updated_at,
+    )
 
 
 @router.patch("/{request_id}/status", response_model=RequestResponse)
