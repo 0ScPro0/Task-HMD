@@ -98,7 +98,7 @@ async def create_request(
     )
 
 
-@router.delete("/{request_id}", response_model=RequestResponse)
+@router.delete("/{request_id}")
 @log
 async def delete_request(
     request_id: int,
@@ -186,3 +186,18 @@ async def update_request_status(
 
     # Send notifications
     await notification_service.send_notifications(notification=notification)
+
+    return RequestResponse(
+        type=updated_request.type,
+        title=updated_request.title,
+        description=updated_request.description,
+        status=updated_request.status,
+        admin_comment=updated_request.admin_comment,
+        id=updated_request.id,
+        owner_id=updated_request.owner_id,
+        executor_id=updated_request.executor_id,
+        owner=UserPublicResponse.model_validate(current_user),
+        executor=None,
+        created_at=updated_request.created_at,
+        updated_at=updated_request.updated_at,
+    )

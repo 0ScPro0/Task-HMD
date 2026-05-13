@@ -40,6 +40,11 @@ export function RequestCard({
     const canShowDeleteButton = () => {
         if (!onDelete) return false
         
+        // Если текущий пользователь - исполнитель заявки, не показываем кнопку удаления
+        if (isCurrentUserExecutor) {
+            return false
+        }
+        
         // Для доступных заявок (где есть onAccept) не показываем удаление сотрудникам
         if (onAccept) {
             // Если это доступная заявка (есть onAccept), сотрудники не могут ее удалять
@@ -53,6 +58,7 @@ export function RequestCard({
         }
         
         // Для своих заявок (нет onAccept) показываем удаление владельцам и админам
+        // Владелец заявки (не исполнитель) может удалять свою заявку
         return true
     }
 
@@ -171,8 +177,10 @@ export function RequestCard({
                         </button>
                     )}
                     
-                    {/* Кнопка "Завершить" - только для исполнителя, если заявка в работе */}
-                    {isCurrentUserExecutor && onUpdateStatus && status === "В работе" && (
+                    {/* Кнопка "Завершить" - только для исполнителя, если заявка в работе и не завершена */}
+                    {isCurrentUserExecutor && onUpdateStatus &&
+                     (status === "В работе" || status === "IN_PROGRESS" || status === "in_progress") &&
+                     status !== "Выполнена" && status !== "COMPLETED" && status !== "completed" && (
                         <button
                             className={styles.btnComplete}
                             onClick={() => handleUpdateStatus("COMPLETED")}

@@ -1,7 +1,7 @@
 from typing import Dict, List, Optional, Any, Union
 from pydantic import BaseModel
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select
+from sqlalchemy import select, or_
 from sqlalchemy.orm import selectinload
 from datetime import datetime
 
@@ -62,6 +62,37 @@ class RequestRepository(BaseRepository[Request, RequestCreate, RequestUpdate]):
             limit=limit,
             relationships=relationships,
         )
+        return requests
+
+    async def get_requests_by_owner_or_executor(
+        self,
+        session: AsyncSession,
+        *,
+        user_id: int,
+        limit: Optional[int] = 100,
+        relationships: Optional[List[str]] = None,
+    ) -> Optional[List[Request]]:
+        """
+        Get Requests list by owner or executor id
+
+        Args:
+            session: Database session
+            user_id: Specific owner id
+            limit: Limit of entry
+            relationships: List of relationship names to load
+
+        Returns:
+            List of requests or None if not found
+        """
+        fields = {
+            "owner_id": user_id,
+            "executor_id": user_id,
+        }
+
+        requests = await self.get_by_fields_many(
+            session=session, fields=fields, limit=limit, relationships=relationships
+        )
+
         return requests
 
     @log_database_queries

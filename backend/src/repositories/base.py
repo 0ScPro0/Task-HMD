@@ -155,6 +155,7 @@ class BaseRepository(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
         result = await session.execute(query)
         return list(result.scalars().all())
 
+    @log_database_queries
     async def get_by_fields(
         self, session: AsyncSession, *, fields: Dict[str, Any]
     ) -> Optional[ModelType]:
@@ -182,6 +183,63 @@ class BaseRepository(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
         result = await session.execute(query)
 
         return result.scalar_one_or_none()
+
+    @log_database_queries
+    async def get_by_fields_many(
+        self,
+        session: AsyncSession,
+        *,
+        fields: Dict[str, Any],
+        skip: int = 0,
+        limit: int = 100,
+        order_by: Any = None,
+        relationships: List[str] = None,
+    ) -> List[ModelType]:
+        """
+        Get many objects by multiple fields values.
+        An object is returned if at least one field matches.
+
+        Args:
+            session: Database session
+            fields: dict of fields {name: value}
+            skip: Skip number of objects
+            limit: Limit number of objects
+            order_by: Order by clause
+            relationships: List of relationship names to load
+
+        Returns:
+            List of objects
+        """
+        filter_conditions = []
+
+        for field_name, field_value in fields.items():
+            if not hasattr(self.model, field_name):
+                raise AttributeError(
+                    f"Model {self.model.__name__} has no field {field_name}"
+                )
+            if field_value:
+                filter_conditions.append(getattr(self.model, field_name) == field_value)
+
+        if not filter_conditions:
+            return []
+
+        if not order_by:
+            order_by = self.model.id
+
+        query = (
+            select(self.model)
+            .where(or_(*filter_conditions))
+            .offset(skip)
+            .limit(limit)
+            .order_by(order_by)
+        )
+
+        if relationships:
+            for rel in relationships:
+                query = query.options(selectinload(getattr(self.model, rel)))
+
+        result = await session.execute(query)
+        return list(result.scalars().all())
 
     @log_database_queries
     async def create(

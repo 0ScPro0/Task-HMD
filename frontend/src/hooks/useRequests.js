@@ -32,13 +32,13 @@ export function useRequests() {
         // Map status from enum to readable string
         const getStatusLabel = (status) => {
             switch (status) {
-                case "NEW":
+                case "new":
                     return "Новая"
-                case "IN_PROGRESS":
+                case "in_progress":
                     return "В работе"
-                case "COMPLETED":
+                case "completed":
                     return "Выполнена"
-                case "CANCELLED":
+                case "cancelled":
                     return "Отменена"
                 default:
                     return status || "Новая"

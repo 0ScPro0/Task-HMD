@@ -71,9 +71,9 @@ class RequestService(
         Returns:
             List of RequestResponse
         """
-        requests = await self.repository.get_requests_by_owner(
+        requests = await self.repository.get_requests_by_owner_or_executor(
             self.session,
-            owner_id=user.id,
+            user_id=user.id,
             limit=limit,
             relationships=["owner", "executor"],
         )
