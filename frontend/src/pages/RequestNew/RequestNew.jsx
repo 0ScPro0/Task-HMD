@@ -225,7 +225,6 @@ export function RequestNew() {
                                     <option value="" disabled>Выберите специалиста</option>
                                     <option value="plumber">Сантехник</option>
                                     <option value="electrician">Электрик</option>
-                                    <option value="other">Другое</option>
                                 </select>
                             </div>
 
