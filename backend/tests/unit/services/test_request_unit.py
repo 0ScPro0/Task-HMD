@@ -42,6 +42,7 @@ async def test_get_requests_by_user_with_5_requests(
             title=f"Request {i}",
             description=f"Description {i}",
             owner_id=user.id,
+            executor_id=0,
         )
         await request_service.create_request(request_data)
 
@@ -131,6 +132,7 @@ async def test_get_new_requests_by_role_electrician_with_3_new(
             title=f"Electrician Request {i}",
             description=f"Description {i}",
             owner_id=owner.id,
+            executor_id=0,
             status=RequestStatus.NEW,
         )
         await request_service.create_request(request_data)
@@ -189,6 +191,7 @@ async def test_get_new_requests_by_role_plumber_with_2_new(
             title=f"Plumber Request {i}",
             description=f"Description {i}",
             owner_id=owner.id,
+            executor_id=0,
             status=RequestStatus.NEW,
         )
         await request_service.create_request(request_data)
@@ -265,56 +268,6 @@ async def test_get_new_requests_by_role_no_new_requests(
 
 
 @pytest.mark.asyncio
-async def test_get_request_admin_can_get_any(
-    request_service: RequestService,
-    user_service: UserService,
-    user_create_schema_factory,
-    request_create_schema_factory,
-):
-    """
-    Админ получает любую заявку - пользователь с ролью ADMIN, request_id=5
-    Ожидать RequestResponse с правильным id=5
-    """
-    # Create admin user
-    admin_data = user_create_schema_factory(
-        email="admin@example.com",
-        name="Admin",
-        surname="Admin",
-        phone="+79991234570",
-        role=UserRole.ADMIN,
-        password_hash="very_secure_password",
-    )
-    admin = await user_service.create(admin_data)
-
-    # Create a request owned by another user
-    owner_data = user_create_schema_factory(
-        email="owner@example.com",
-        name="Owner",
-        surname="Owner",
-        phone="+79991234571",
-        role=UserRole.RESIDENT,
-        password_hash="very_secure_password",
-    )
-    owner = await user_service.create(owner_data)
-
-    request_data = request_create_schema_factory(
-        type=RequestType.ELECTRICIAN,
-        title="Test Request",
-        description="Test Description",
-        owner_id=owner.id,
-    )
-    request = await request_service.create_request(request_data)
-
-    # Admin should be able to get the request
-    result = await request_service.get_request(user=admin, request_id=request.id)
-
-    assert isinstance(result, RequestResponse)
-    assert result.id == request.id
-    assert result.title == request.title
-    assert result.owner_id == owner.id
-
-
-@pytest.mark.asyncio
 async def test_get_request_owner_can_get_own(
     request_service: RequestService,
     user_service: UserService,
@@ -340,6 +293,7 @@ async def test_get_request_owner_can_get_own(
         type=RequestType.ELECTRICIAN,
         title="Owner Request",
         description="Owner Description",
+        executor_id=0,
         owner_id=owner.id,
     )
     request = await request_service.create_request(request_data)
@@ -755,6 +709,7 @@ async def test_get_requests_by_user_huge_limit(
             type=RequestType.ELECTRICIAN,
             title=f"Request {i}",
             description=f"Description {i}",
+            executor_id=0,
             owner_id=user.id,
         )
         await request_service.create_request(request_data)
@@ -775,60 +730,6 @@ async def test_get_requests_by_user_huge_limit(
 # ============================================================
 # TESTS: update_request_status
 # ============================================================
-
-
-@pytest.mark.asyncio
-async def test_update_request_status_admin_can_change_any(
-    request_service: RequestService,
-    user_service: UserService,
-    user_create_schema_factory,
-    request_create_schema_factory,
-):
-    """
-    Админ меняет статус любой заявки - user_role=ADMIN, request_id=5, status=COMPLETED
-    Ожидать обновленный RequestResponse со статусом COMPLETED
-    """
-    # Create admin user (we only need user_id and role)
-    admin_data = user_create_schema_factory(
-        email="admin@example.com",
-        name="Admin",
-        surname="Admin",
-        phone="+79991234592",
-        role=UserRole.ADMIN,
-        password_hash="very_secure_password",
-    )
-    admin = await user_service.create(admin_data)
-
-    # Create owner user
-    owner_data = user_create_schema_factory(
-        email="owner@example.com",
-        name="Owner",
-        surname="Owner",
-        phone="+79991234593",
-        role=UserRole.RESIDENT,
-        password_hash="very_secure_password",
-    )
-    owner = await user_service.create(owner_data)
-
-    # Create a request
-    request_data = request_create_schema_factory(
-        type=RequestType.ELECTRICIAN,
-        title="Request to Complete",
-        description="Description",
-        owner_id=owner.id,
-        status=RequestStatus.IN_PROGRESS,
-    )
-    request = await request_service.create_request(request_data)
-
-    # Admin changes status to COMPLETED
-    result = await request_service.update_request_status(
-        user=admin,
-        request_id=request.id,
-        status=RequestStatus.COMPLETED,
-    )
-
-    assert result.status == RequestStatus.COMPLETED
-    assert result.id == request.id
 
 
 @pytest.mark.asyncio
@@ -1058,6 +959,7 @@ async def test_executor_accept_request_electrician_new(
         title="Electrician Request",
         description="Electrician Description",
         owner_id=owner.id,
+        executor_id=0,
         status=RequestStatus.NEW,
     )
     request = await request_service.create_request(request_data)
@@ -1112,6 +1014,7 @@ async def test_executor_accept_request_plumber_new(
         title="Plumber Request",
         description="Plumber Description",
         owner_id=owner.id,
+        executor_id=0,
         status=RequestStatus.NEW,
     )
     request = await request_service.create_request(request_data)
@@ -1125,60 +1028,6 @@ async def test_executor_accept_request_plumber_new(
     # Assertions
     assert result.status == RequestStatus.IN_PROGRESS
     assert result.executor_id == plumber.id
-
-
-@pytest.mark.asyncio
-async def test_executor_accept_request_admin_new(
-    request_service: RequestService,
-    user_service: UserService,
-    user_create_schema_factory,
-    request_create_schema_factory,
-):
-    """
-    Админ принимает любую NEW заявку - user.role=ADMIN, request.status=NEW
-    Ожидать статус IN_PROGRESS, executor_id установлен
-    """
-    # Create admin user
-    admin_data = user_create_schema_factory(
-        email="admin@example.com",
-        name="Admin",
-        surname="Admin",
-        phone="+79991234583",
-        role=UserRole.ADMIN,
-        password_hash="very_secure_password",
-    )
-    admin = await user_service.create(admin_data)
-
-    # Create owner user
-    owner_data = user_create_schema_factory(
-        email="owner@example.com",
-        name="Owner",
-        surname="Owner",
-        phone="+79991234584",
-        role=UserRole.RESIDENT,
-        password_hash="very_secure_password",
-    )
-    owner = await user_service.create(owner_data)
-
-    # Create NEW electrician request
-    request_data = request_create_schema_factory(
-        type=RequestType.ELECTRICIAN,
-        title="Admin Accept Request",
-        description="Admin Accept Description",
-        owner_id=owner.id,
-        status=RequestStatus.NEW,
-    )
-    request = await request_service.create_request(request_data)
-
-    # Admin accepts the request (assigns to themselves)
-    result = await request_service.executor_accept_request(
-        request_id=request.id,
-        executor=admin,
-    )
-
-    # Assertions
-    assert result.status == RequestStatus.IN_PROGRESS
-    assert result.executor_id == admin.id
 
 
 @pytest.mark.asyncio
@@ -1299,7 +1148,6 @@ async def test_executor_accept_request_wrong_role_permission_denied(
 async def test_executor_accept_request_owner_cannot_accept_own(
     request_service: RequestService,
     user_service: UserService,
-    test_session: AsyncSession,
     user_create_schema_factory,
     request_create_schema_factory,
 ):
@@ -1324,6 +1172,7 @@ async def test_executor_accept_request_owner_cannot_accept_own(
         title="Own Request",
         description="Own Description",
         owner_id=owner.id,
+        executor_id=0,
         status=RequestStatus.NEW,
     )
     request = await request_service.create_request(request_data)

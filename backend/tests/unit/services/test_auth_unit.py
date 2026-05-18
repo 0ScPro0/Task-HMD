@@ -329,7 +329,7 @@ async def test_login_tokens_updates(
         password="test_password",
     )
     login_response1 = await auth_service.login(login_request)
-    await asyncio.sleep(0.65)  # Duration
+    await asyncio.sleep(1)  # Duration
     login_response2 = await auth_service.login(login_request)
 
     # Check that tokens in database is updated

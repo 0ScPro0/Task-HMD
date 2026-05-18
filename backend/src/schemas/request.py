@@ -16,7 +16,7 @@ class RequestBase(BaseModel):
 
 class RequestCreate(RequestBase):
     owner_id: int
-    executor_id: Optional[int] = None
+    executor_id: Optional[int] = Field(0)
 
 
 class RequestUpdate(RequestBase):
